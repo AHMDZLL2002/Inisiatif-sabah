@@ -70,6 +70,11 @@ function closeSidebar() {
 }
 
 function goTo(sec) {
+  const legacySections = new Set(['tempahan', 'mohon-cuti', 'eizin', 'slip-gaji', 'tuntutan', 'hr-kepala-vot', 'hr-slip-gaji', 'hr-tuntutan', 'notis', 'urus-pilihan', 'profiler', 'daftar-pengguna', 'lulus-cuti', 'lulus-eizin', 'lulus-tempahan']);
+  if (legacySections.has(sec)) {
+    sec = 'inisiatif';
+  }
+
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   const el = document.getElementById('sec-' + sec);
   if (el) el.classList.add('active');
