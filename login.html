@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>SSMJ — Sistem Integrasi Data | Log Masuk</title>
+  <title>Bahagian Pengurusan Inisiatif | Log Masuk</title>
   <link rel="icon" type="image/jpeg" href="assets/LOGO%20SMJ.jpg" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
@@ -31,14 +31,14 @@
   <div class="left-panel">
     <div class="brand">
       <div class="logo-wrap"><img src="assets/logo-footer.png" alt="Logo Footer" /><img src="assets/LOGO%20SMJ.jpg" alt="Logo SSMJ" /></div>
-      <div class="brand-name">SSMJ Portal</div><div class="brand-tag">Sistem Integrasi Data</div>
-      <p class="brand-desc">Platform bersepadu untuk pengurusan maklumat kakitangan, perkhidmatan dalam talian dan pentadbiran pejabat yang cekap dan selamat.</p>
-      <ul class="features"><li><i class="fas fa-inbox"></i> Peti Masuk &amp; Notifikasi</li><li><i class="fas fa-calendar-check"></i> Tempahan Bilik &amp; Kemudahan</li><li><i class="fas fa-umbrella-beach"></i> Permohonan Cuti Dalam Talian</li><li><i class="fas fa-door-open"></i> Sistem E-Izin Keluar Pejabat</li><li><i class="fas fa-shield-alt"></i> Panel Pentadbiran Berpusat</li></ul>
+      <div class="brand-name">Bahagian Pengurusan Inisiatif</div><div class="brand-tag">Sekretariat Sabah Maju Jaya</div>
+      <p class="brand-desc">Portal bersepadu untuk menyelaras, mengurus dan memantau pelaksanaan inisiatif setiap kementerian secara tersusun, telus dan berimpak.</p>
+      <ul class="features"><li><i class="fas fa-chart-line"></i> Pemantauan kemajuan inisiatif kementerian</li><li><i class="fas fa-diagram-project"></i> Penyelarasan projek antara kementerian</li><li><i class="fas fa-file-circle-check"></i> Pengurusan laporan dan kemas kini</li><li><i class="fas fa-users-gear"></i> Kerjasama agensi dan pihak berkepentingan</li><li><i class="fas fa-shield-alt"></i> Akses portal yang selamat dan berperingkat</li></ul>
     </div>
     <div class="brand-footer"><img src="assets/logo-footer.png" alt="Logo Footer SSMJ" /><span>Hakcipta Terpelihara 2026 &copy; Sekretariat Sabah Maju Jaya, Jabatan Ketua Menteri</span><span>Dibangunkan untuk Portal Inisiatif Sabah</span></div>
   </div>
   <div class="login-card">
-    <div class="login-header"><div class="welcome"><i class="fas fa-hand-wave"></i> Selamat Datang</div><h1>Log Masuk Portal Akses</h1><p>Masukkan email Firebase dan kata laluan untuk mengakses portal kementerian.</p></div>
+    <div class="login-header"><div class="welcome"><i class="fas fa-hand-wave"></i> Selamat Datang</div><h1>Log Masuk Portal Inisiatif</h1><p>Masukkan email dan kata laluan untuk mengakses ruang pengurusan serta pemantauan inisiatif kementerian.</p></div>
     <div class="error-box" id="errorBox"><i class="fas fa-exclamation-circle"></i><span id="errorMsg">Email atau kata laluan tidak sah.</span></div>
     <form id="loginForm" onsubmit="handleLogin(event)" autocomplete="off">
       <div class="form-group"><label for="username">Alamat Email</label><div class="input-wrap"><input type="email" id="username" placeholder="Masukkan email Firebase" required autocomplete="username" /><i class="fas fa-envelope icon"></i></div></div>
@@ -46,7 +46,7 @@
       <div class="form-opts"><label class="remember"><input type="checkbox" id="remember" /> Ingat saya</label><a href="forgot-password.html" class="forgot">Lupa kata laluan?</a></div>
       <button type="submit" class="btn-login" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Log Masuk</button>
     </form>
-    <div class="footer-credit"><p><i class="fas fa-headset" style="margin-right:6px;color:var(--gold-dark)"></i>Perlu bantuan? Hubungi Admin</p><div class="contact-btns"><a class="contact-btn" href="tel:+601125302421"><i class="fas fa-phone-alt"></i> 011-2530 2421</a><a class="contact-btn" href="mailto:ssmjit@gmail.com"><i class="fas fa-envelope"></i> ssmjit@gmail.com</a></div></div>
+    <div class="footer-credit"><p><i class="fas fa-headset" style="margin-right:6px;color:var(--gold-dark)"></i>Perlukan bantuan akses?</p><div class="contact-btns"><a class="contact-btn" href="tel:+601125302421"><i class="fas fa-phone-alt"></i> 011-2530 2421</a><a class="contact-btn" href="mailto:ssmjit@gmail.com"><i class="fas fa-envelope"></i> ssmjit@gmail.com</a></div></div>
   </div>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script>
