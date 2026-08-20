@@ -1,110 +1,61 @@
 <!DOCTYPE html>
 <html lang="ms">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Log Masuk Jabatan | Blue Economic Agency</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="icon" href="assets/LOGO%20SMJ.jpg" type="image/jpeg" />
-    <link rel="stylesheet" href="styles.css?v=20260819j" />
-  </head>
-  <body data-page="login" class="login-page">
-    <header class="hero dashboard-hero">
-      <nav class="navbar container">
-        <a href="index.html" class="brand">
-          <span class="brand-mark" aria-hidden="true"><img src="assets/LOGO%20SMJ.jpg" alt="" class="brand-logo" /></span>
-          <span>Bahagian Pengurusan &amp; Inisiatif, Sekretariat Sabah Maju Jaya</span>
-        </a>
-        <div class="nav-links">
-          <a class="nav-link" href="index.html">Halaman Utama</a>
-          <a class="nav-link" href="dashboard.html">Dashboard</a>
-        </div>
-      </nav>
-
-      <div class="container login-hero-content">
-        <div class="login-layout">
-          <section class="login-intro">
-            <p class="eyebrow">Log Masuk Jabatan</p>
-            <h1>Portal Akses Kementerian</h1>
-            <p class="dashboard-summary">Sila masukkan username, pilih kementerian dan kata laluan untuk memasuki dashboard admin. Hanya pegawai yang disahkan boleh mengemas kini laporan inisiatif masing-masing.</p>
-
-            <div class="login-highlights" aria-label="Sorotan akses">
-              <article>
-                <span>1</span>
-                <p>Akses berasaskan akaun yang didaftarkan dalam Pengurusan Pengguna.</p>
-              </article>
-              <article>
-                <span>2</span>
-                <p>Peranan dan kementerian menentukan modul yang boleh diakses.</p>
-              </article>
-              <article>
-                <span>3</span>
-                <p>Admin SSMJ sahaja boleh menyemak dan meluluskan kemaskini.</p>
-              </article>
-            </div>
-          </section>
-
-          <div class="login-card">
-            <div class="login-card-header">
-              <p class="login-card-kicker">Portal Akses Rasmi</p>
-              <h2>Pengesahan Pengguna</h2>
-              <p>Masuk menggunakan akaun yang telah didaftarkan oleh pentadbir jabatan.</p>
-            </div>
-
-            <div class="login-card-meta" aria-label="Maklumat ringkas akses">
-              <span>Akaun didaftarkan</span>
-              <span>Username + Kementerian</span>
-              <span>Akses jabatan</span>
-            </div>
-
-            <form id="login-form" class="login-form">
-              <label>
-                Username
-                <input id="username-input" type="text" placeholder="Masukkan username" required />
-              </label>
-
-              <label>
-                Kementerian
-                <select id="department-select" required>
-                  <option value="">-- Pilih kementerian --</option>
-                  <option value="ssmj">Sekretariat Sabah Maju Jaya (Admin SSMJ)</option>
-                  <option value="kerja-raya">Kementerian Kerja Raya dan Utiliti</option>
-                  <option value="kewangan">Kementerian Kewangan</option>
-                  <option value="perindustrian">Kementerian Perindustrian, Keusahawanan dan Pengangkutan</option>
-                  <option value="tempatan">Kementerian Kerajaan Tempatan dan Perumahan</option>
-                  <option value="pertanian">Kementerian Pertanian, Perikanan dan Industri Makanan</option>
-                  <option value="luar-bandar">Kementerian Pembangunan Luar Bandar</option>
-                  <option value="pendidikan">Kementerian Pendidikan, Sains, Teknologi dan Inovasi</option>
-                  <option value="pelancongan">Kementerian Pelancongan, Kebudayaan dan Alam Sekitar</option>
-                  <option value="wanita">Kementerian Wanita, Kesihatan dan Kesejahteraan Rakyat</option>
-                  <option value="belia">Kementerian Pembangunan Belia, Kemajuan Sukan dan Ekonomi Kreatif</option>
-                </select>
-              </label>
-
-              <label>
-                Kata Laluan
-                <input id="password-input" type="password" placeholder="Masukkan kata laluan kementerian" required />
-              </label>
-
-              <div class="login-card-notes">
-                <p class="form-helper">Gunakan akaun yang didaftarkan dalam Pengurusan Pengguna (username, role, kementerian dan kata laluan).</p>
-                <p class="form-helper">Jika tiada akaun didaftarkan, akses demo asal masih aktif menggunakan kata laluan SMJ2026.</p>
-              </div>
-
-              <p id="login-feedback" class="form-feedback" aria-live="polite"></p>
-
-              <button type="submit" class="btn btn-primary">Masuk ke dashboard admin</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <script src="script.js?v=20260819h"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>SSMJ — Sistem Integrasi Data | Log Masuk</title>
+  <link rel="icon" type="image/jpeg" href="assets/LOGO%20SMJ.jpg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{--navy:#0d2540;--navy2:#163755;--gold:#f0a500;--gold-dark:#d4900a;--white:#fff}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;min-height:100vh;overflow:hidden;display:flex;background:var(--navy);color:var(--white)}
+    #bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+    .left-panel{flex:1;position:relative;z-index:2;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:48px 40px 28px;overflow:hidden;background:linear-gradient(160deg,rgba(10,28,58,.72),rgba(18,48,82,.6) 50%,rgba(14,38,68,.55))}
+    .brand{text-align:center;position:relative;z-index:2}.brand:before{content:'';position:absolute;inset:-40px -50px;background:radial-gradient(ellipse,rgba(10,30,60,.72) 40%,transparent);border-radius:24px;z-index:-1}
+    .logo-wrap{display:flex;align-items:center;justify-content:center;gap:14px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.18);border-radius:28px;padding:14px 24px;margin:0 auto 28px;box-shadow:0 8px 32px rgba(0,0,0,.3);backdrop-filter:blur(10px)}
+    .logo-wrap img{height:52px;width:auto;object-fit:contain;border-radius:8px}.logo-wrap img[alt="Logo Footer"]{height:72px}
+    .brand-name{font-size:34px;font-weight:800;margin-bottom:6px;text-shadow:0 2px 8px #000,0 0 24px #000}.brand-tag{font-size:11px;text-transform:uppercase;letter-spacing:3px;color:rgba(255,255,255,.85);margin-bottom:36px}.brand-desc{font-size:14px;color:rgba(255,255,255,.92);max-width:320px;line-height:1.9;margin-bottom:40px;text-shadow:0 1px 4px #000}
+    .features{list-style:none;text-align:left;display:inline-block}.features li{display:flex;align-items:center;gap:10px;font-size:13.5px;margin-bottom:14px;text-shadow:0 1px 4px #000}.features li i{color:var(--gold);width:18px;text-align:center}
+    .brand-footer{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-size:11px;color:rgba(255,255,255,.65);background:rgba(10,30,60,.45);padding:10px 20px;border-radius:12px;backdrop-filter:blur(6px)}.brand-footer img{height:28px;width:auto;border-radius:4px;opacity:.85}
+    .login-card{width:460px;min-width:0;flex-shrink:0;align-self:center;margin:24px 28px 24px 0;padding:52px 44px 44px;position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;overflow-y:auto;background:rgba(5,18,45,.84);backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.1);border-radius:20px;box-shadow:0 32px 100px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.09),0 0 60px rgba(82,182,255,.04)}
+    .login-card:before{content:'';position:absolute;top:0;left:24px;right:24px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),rgba(240,165,0,.4),transparent)}.login-header{margin-bottom:36px}.welcome{font-size:13px;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}.login-header h1{font-size:27px;font-weight:800;margin-bottom:6px}.login-header p{font-size:13.5px;color:rgba(255,255,255,.65);line-height:1.6}
+    .form-group{margin-bottom:20px}.form-group label{display:block;font-size:11.5px;font-weight:700;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px}.input-wrap{position:relative}.input-wrap .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.4);font-size:15px;pointer-events:none}.input-wrap input{width:100%;padding:13px 42px;border:1.5px solid rgba(255,255,255,.18);border-radius:10px;font-size:14px;color:#fff;outline:none;background:rgba(255,255,255,.1);font-family:inherit}.input-wrap input::placeholder{color:rgba(255,255,255,.35)}.input-wrap input:focus{border-color:var(--gold);background:rgba(255,255,255,.15);box-shadow:0 0 0 4px rgba(240,165,0,.2)}.toggle-pw{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:rgba(255,255,255,.4)}
+    .form-opts{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}.remember{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.65)}.remember input{accent-color:var(--gold)}.forgot{font-size:13px;color:var(--gold);text-decoration:none}.forgot:hover{text-decoration:underline}
+    .error-box{display:none;margin-bottom:18px;background:rgba(239,68,68,.18);border:1px solid rgba(239,68,68,.45);border-radius:9px;padding:12px 15px;font-size:13px;color:#fca5a5;align-items:center;gap:8px}.error-box.show{display:flex}.btn-login{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold-dark),var(--gold));color:#0d2540;border:0;border-radius:10px;font-size:14.5px;font-weight:800;cursor:pointer;letter-spacing:.5px;font-family:inherit;text-transform:uppercase;box-shadow:0 6px 24px rgba(240,165,0,.35)}.btn-login:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(240,165,0,.5)}.btn-login i{margin-right:6px}.btn-login.loading{opacity:.75;cursor:not-allowed}.footer-credit{margin-top:28px;text-align:center;font-size:12.5px;color:rgba(255,255,255,.5)}.footer-credit p{margin-bottom:12px}.contact-btns{display:flex;gap:10px;justify-content:center}.contact-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);font-size:13px;font-weight:600;text-decoration:none;color:rgba(255,255,255,.8);background:rgba(255,255,255,.08)}
+    @media(max-width:800px){.left-panel{display:none}.login-card{width:calc(100% - 32px);margin:16px;padding:40px 28px 36px;align-self:flex-start;max-height:calc(100vh - 32px)}}@media(max-width:480px){.login-card{padding:32px 20px 40px;margin:12px;width:calc(100% - 24px)}.login-header h1{font-size:22px}.contact-btns{flex-direction:column;align-items:center}}
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas"></canvas>
+  <div class="left-panel">
+    <div class="brand">
+      <div class="logo-wrap"><img src="assets/logo-footer.png" alt="Logo Footer" /><img src="assets/LOGO%20SMJ.jpg" alt="Logo SSMJ" /></div>
+      <div class="brand-name">SSMJ Portal</div><div class="brand-tag">Sistem Integrasi Data</div>
+      <p class="brand-desc">Platform bersepadu untuk pengurusan maklumat kakitangan, perkhidmatan dalam talian dan pentadbiran pejabat yang cekap dan selamat.</p>
+      <ul class="features"><li><i class="fas fa-inbox"></i> Peti Masuk &amp; Notifikasi</li><li><i class="fas fa-calendar-check"></i> Tempahan Bilik &amp; Kemudahan</li><li><i class="fas fa-umbrella-beach"></i> Permohonan Cuti Dalam Talian</li><li><i class="fas fa-door-open"></i> Sistem E-Izin Keluar Pejabat</li><li><i class="fas fa-shield-alt"></i> Panel Pentadbiran Berpusat</li></ul>
+    </div>
+    <div class="brand-footer"><img src="assets/logo-footer.png" alt="Logo Footer SSMJ" /><span>Hakcipta Terpelihara 2026 &copy; Sekretariat Sabah Maju Jaya, Jabatan Ketua Menteri</span><span>Dibangunkan untuk Portal Inisiatif Sabah</span></div>
+  </div>
+  <div class="login-card">
+    <div class="login-header"><div class="welcome"><i class="fas fa-hand-wave"></i> Selamat Datang</div><h1>Log Masuk Portal Akses</h1><p>Masukkan email Firebase dan kata laluan untuk mengakses portal kementerian.</p></div>
+    <div class="error-box" id="errorBox"><i class="fas fa-exclamation-circle"></i><span id="errorMsg">Email atau kata laluan tidak sah.</span></div>
+    <form id="loginForm" onsubmit="handleLogin(event)" autocomplete="off">
+      <div class="form-group"><label for="username">Alamat Email</label><div class="input-wrap"><input type="email" id="username" placeholder="Masukkan email Firebase" required autocomplete="username" /><i class="fas fa-envelope icon"></i></div></div>
+      <div class="form-group"><label for="password">Kata Laluan</label><div class="input-wrap"><input type="password" id="password" placeholder="Masukkan kata laluan" required autocomplete="current-password" /><i class="fas fa-lock icon"></i><i class="fas fa-eye toggle-pw" id="pwToggleIcon" onclick="togglePw()"></i></div></div>
+      <div class="form-opts"><label class="remember"><input type="checkbox" id="remember" /> Ingat saya</label><a href="forgot-password.html" class="forgot">Lupa kata laluan?</a></div>
+      <button type="submit" class="btn-login" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Log Masuk</button>
+    </form>
+    <div class="footer-credit"><p><i class="fas fa-headset" style="margin-right:6px;color:var(--gold-dark)"></i>Perlu bantuan? Hubungi Admin</p><div class="contact-btns"><a class="contact-btn" href="tel:+601125302421"><i class="fas fa-phone-alt"></i> 011-2530 2421</a><a class="contact-btn" href="mailto:ssmjit@gmail.com"><i class="fas fa-envelope"></i> ssmjit@gmail.com</a></div></div>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script>
+    'use strict';
+    firebase.initializeApp({apiKey:'AIzaSyB0Z3N0n7mR19hhTBGPoLkOotW7eTFgs_A',authDomain:'inisiatif-sabah.firebaseapp.com',projectId:'inisiatif-sabah',storageBucket:'inisiatif-sabah.firebasestorage.app',messagingSenderId:'565943558519',appId:'1:565943558519:web:5d4cb81b09a71c66d54172'});
+    const auth=firebase.auth();
+    async function handleLogin(event){event.preventDefault();const email=document.getElementById('username').value.trim().toLowerCase();const password=document.getElementById('password').value;const btn=document.getElementById('loginBtn');const box=document.getElementById('errorBox');btn.classList.add('loading');btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Mengesahkan...';box.classList.remove('show');try{const credential=await auth.signInWithEmailAndPassword(email,password);const user=credential.user;if(!user.emailVerified){await auth.signOut();throw Object.assign(new Error('verify'),{code:'auth/email-not-verified'})}const token=await user.getIdToken();sessionStorage.setItem('ssmjUser',JSON.stringify({uid:user.uid,username:user.email,email:user.email,name:user.displayName||user.email,role:'user',token}));window.location.replace('dashboard.html')}catch(error){document.getElementById('errorMsg').textContent=error.code==='auth/email-not-verified'?'Sila sahkan email anda sebelum log masuk.':'Email atau kata laluan tidak sah.';box.classList.add('show');btn.classList.remove('loading');btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Log Masuk'}}
+    function togglePw(){const input=document.getElementById('password');const icon=document.getElementById('pwToggleIcon');input.type=input.type==='password'?'text':'password';icon.className=input.type==='password'?'fas fa-eye toggle-pw':'fas fa-eye-slash toggle-pw'}
+    const canvas=document.getElementById('bgCanvas'),ctx=canvas.getContext('2d');let particles=[];function resize(){canvas.width=innerWidth;canvas.height=innerHeight}function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.strokeStyle='rgba(100,200,255,.08)';for(let x=0;x<canvas.width;x+=60){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke()}for(let y=0;y<canvas.height;y+=60){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke()}particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.fillStyle='rgba(82,182,255,.55)';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()});requestAnimationFrame(animate)}resize();addEventListener('resize',resize);for(let i=0;i<55;i++)particles.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:1+Math.random()*2});animate();
+  </script>
+</body>
 </html>

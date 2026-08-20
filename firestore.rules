@@ -1,0 +1,92 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isHrOrAdmin() {
+      return signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'hr'];
+    }
+
+    function owns(resource) {
+      return signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && (userId == request.auth.uid || isAdmin());
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /reports/{reportId} {
+      allow read: if true;
+      allow create, update, delete: if signedIn();
+    }
+
+    match /activities/{activityId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /gallery/{galleryId} {
+      allow read: if true;
+      allow create, update, delete: if signedIn();
+    }
+
+    match /inbox/{messageId} {
+      allow read, update: if owns(resource) || isAdmin();
+      allow create: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /cuti/{requestId} {
+      allow read, create: if owns(request.resource) || isHrOrAdmin();
+      allow update: if owns(resource) || isHrOrAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /eizin/{requestId} {
+      allow read, create: if owns(request.resource) || isHrOrAdmin();
+      allow update: if owns(resource) || isHrOrAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /tempahan/{requestId} {
+      allow read, create: if owns(request.resource) || isHrOrAdmin();
+      allow update: if owns(resource) || isHrOrAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /tuntutan/{claimId} {
+      allow read, create: if owns(request.resource) || isHrOrAdmin();
+      allow update: if owns(resource) || isHrOrAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /slipGaji/{slipId} {
+      allow read: if owns(resource) || isHrOrAdmin();
+      allow create, update, delete: if isHrOrAdmin();
+    }
+
+    match /options/{optionId} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /notis/{noticeId} {
+      allow read: if signedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
