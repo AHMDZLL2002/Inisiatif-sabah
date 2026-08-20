@@ -2,8 +2,8 @@
 
 // -- Auth check
 const rawUser = sessionStorage.getItem('ssmjUser');
-if (!rawUser) { window.location.replace('index.html'); }
-const CU = JSON.parse(rawUser);
+if (!rawUser) { window.location.replace('login.html'); }
+const CU = rawUser ? JSON.parse(rawUser) : { username: '', name: 'Pengguna', role: 'user', token: '' };
 
 // -- API helper
 async function api(method, path, body) {
