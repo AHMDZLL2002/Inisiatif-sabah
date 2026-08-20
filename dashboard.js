@@ -1,5 +1,7 @@
 ﻿'use strict';
 
+const USE_LEGACY_API = false;
+
 // -- Auth check
 const rawUser = sessionStorage.getItem('ssmjUser');
 if (!rawUser) { window.location.replace('login.html'); }
@@ -147,6 +149,7 @@ async function init() {
   document.getElementById('topDate').innerHTML = '<i class="fas fa-calendar-alt"></i> ' + dateStr;
   document.getElementById('wbDate').textContent = dateStr;
 
+  if (USE_LEGACY_API) {
   try {
     const [
       inboxRes, tempahanRes, cutiRes, eizinRes,
@@ -217,6 +220,13 @@ async function init() {
     if (!r.ok) return;
     r.json().then(function(rec) { if (rec.avatar) setAvatarChips(rec.avatar, rec.nama); });
   }).catch(function() {});
+
+  }
+
+  if (!USE_LEGACY_API) {
+    renderHome();
+    renderInitiativeReports();
+  }
 }
 
 function renderAll() {
