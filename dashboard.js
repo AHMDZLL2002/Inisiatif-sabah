@@ -1882,4 +1882,64 @@ function doLogout() {
 }
 
 // -- Bootstrap
+const INITIATIVE_REPORTS_KEY = 'ssmj-initiative-reports';
+
+function getInitiativeReports() {
+  try {
+    const reports = JSON.parse(localStorage.getItem(INITIATIVE_REPORTS_KEY) || '[]');
+    return Array.isArray(reports) ? reports : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function renderInitiativeReports() {
+  const list = document.getElementById('initiativeReportList');
+  if (!list) return;
+  const username = typeof CU !== 'undefined' && CU.username ? CU.username : 'pengguna';
+  const reports = getInitiativeReports().filter(report => report.username === username);
+  if (!reports.length) {
+    list.innerHTML = '<p class="empty-state">Belum ada laporan dihantar.</p>';
+    return;
+  }
+  list.innerHTML = reports.map(report => `
+    <div class="alert al-info" style="margin-bottom:12px">
+      <strong>${report.title}</strong> · ${report.status} · ${report.progress}%<br>
+      <span>${report.summary}</span><br>
+      <small>Status semakan: ${report.reviewStatus} | ${report.updatedAt}</small>
+    </div>`).join('');
+}
+
+function submitInitiativeReport(event) {
+  event.preventDefault();
+  const report = {
+    id: `initiative-${Date.now()}`,
+    username: typeof CU !== 'undefined' && CU.username ? CU.username : 'pengguna',
+    title: document.getElementById('initiativeTitle').value.trim(),
+    type: document.getElementById('initiativeType').value,
+    status: document.getElementById('initiativeStatus').value,
+    progress: Math.max(0, Math.min(100, Number(document.getElementById('initiativeProgress').value) || 0)),
+    target: document.getElementById('initiativeTarget').value.trim(),
+    officer: document.getElementById('initiativeOfficer').value.trim(),
+    summary: document.getElementById('initiativeSummary').value.trim(),
+    challenges: document.getElementById('initiativeChallenges').value.trim(),
+    nextAction: document.getElementById('initiativeNextAction').value.trim(),
+    reviewStatus: 'Menunggu Semakan SSMJ',
+    updatedAt: new Date().toLocaleString('ms-MY')
+  };
+  if (!report.title || !report.summary) return;
+  const reports = getInitiativeReports();
+  reports.unshift(report);
+  localStorage.setItem(INITIATIVE_REPORTS_KEY, JSON.stringify(reports));
+  document.getElementById('initiativeReportForm').reset();
+  renderInitiativeReports();
+  const feedback = document.getElementById('initiativeReportFeedback');
+  if (feedback) feedback.textContent = 'Laporan berjaya dihantar dan menunggu semakan SSMJ.';
+  const reportCount = document.getElementById('initiativeReportCount');
+  const pendingCount = document.getElementById('initiativePendingCount');
+  if (reportCount) reportCount.textContent = reports.filter(item => item.username === report.username).length;
+  if (pendingCount) pendingCount.textContent = reports.filter(item => item.username === report.username && item.reviewStatus === 'Menunggu Semakan SSMJ').length;
+}
+
 init();
+setTimeout(renderInitiativeReports, 0);
