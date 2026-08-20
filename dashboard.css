@@ -37,36 +37,28 @@
     }
 
     .sb-logo {
-      flex: 0 0 68px;
-      padding: 0 14px;
+      flex: 0 0 142px;
+      padding: 14px 14px 12px;
       border-bottom: 1px solid rgba(255,255,255,.1);
-      display: flex; align-items: center; gap: 10px;
+      display: flex; flex-direction: column; align-items: center; gap: 9px;
       overflow: hidden;
     }
-    .sb-org-logo-wrap {
-      width: 110px; height: 42px;
-      background: white;
-      border-radius: 8px;
+    .sb-brand-logos {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+    }
+    .sb-footer-logo-wrap, .sb-smj-logo-wrap {
+      width: 92px; height: 42px; background: white; border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      overflow: hidden;
-      box-shadow: 0 3px 10px rgba(0,0,0,.35);
+      overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,.35);
     }
-    .sb-org-logo {
-      width: 100%; height: 100%;
-      object-fit: cover;
+    .sb-smj-logo-wrap { width: 54px; }
+    .sb-footer-logo, .sb-smj-logo {
+      width: 100%; height: 100%; object-fit: contain; padding: 4px;
     }
-    .sb-logo-icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, var(--gold), var(--gold-dk));
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-size: 16px; flex-shrink: 0;
-      box-shadow: 0 3px 10px rgba(240,165,0,.35);
-    }
-    .sb-logo-text { overflow: hidden; }
-    .sb-logo-text .main { font-size: 14px; font-weight: 800; color: white; line-height: 1.3; white-space: nowrap; }
-    .sb-logo-text .sub  { font-size: 9px; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
+    .sb-logo-text { overflow: hidden; text-align: center; max-width: 100%; }
+    .sb-logo-text .main { font-size: 11px; font-weight: 800; color: white; line-height: 1.3; }
+    .sb-logo-text .sub  { font-size: 8px; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .7px; white-space: nowrap; }
 
     .sb-nav {
       flex: 1 1 0;
