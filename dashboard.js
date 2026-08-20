@@ -37,6 +37,9 @@ function initials(name) { return name.split(' ').filter(Boolean).slice(0,2).map(
 // -- Navigation
 const SECTIONS = {
   'home':           { title:'Papan Pemuka',                    sub:'SSMJ Portal \u203a Utama' },
+  'inisiatif':      { title:'Pengurusan Inisiatif',             sub:'Portal Inisiatif \u203a Pengurusan' },
+  'laporan-inisiatif': { title:'Laporan Kemajuan',              sub:'Portal Inisiatif \u203a Laporan' },
+  'aktiviti-inisiatif': { title:'Aktiviti Inisiatif',           sub:'Portal Inisiatif \u203a Aktiviti' },
   'inbox':          { title:'Peti Masuk',                      sub:'SSMJ Portal \u203a Peti Masuk' },
   'tempahan':       { title:'Tempahan',                        sub:'SSMJ Portal \u203a Tempahan' },
   'mohon-cuti':     { title:'Mohon Cuti',                      sub:'SSMJ Portal \u203a Permohonan Cuti' },

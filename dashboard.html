@@ -15,6 +15,17 @@
   <link rel="apple-touch-icon" href="assets/LOGO SMJ.jpg" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="dashboard.css" />
+  <style>
+    /* Legacy HR modules are not part of the ministry initiative portal. */
+    #kewanganNav, #hrNav,
+    #sec-tempahan, #sec-mohon-cuti, #sec-eizin,
+    #sec-slip-gaji, #sec-tuntutan, #sec-hr-kepala-vot,
+    #sec-hr-slip-gaji, #sec-hr-tuntutan,
+    #sec-lulus-cuti, #sec-lulus-eizin, #sec-lulus-tempahan,
+    #scTempahan, #scCuti, #scEizin {
+      display: none !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -147,14 +158,14 @@
       <i class="fas fa-inbox"></i><span class="lbl">Peti Masuk</span>
       <span class="nav-badge" id="sbInboxBadge">3</span>
     </div>
-    <div class="nav-item" data-sec="tempahan" onclick="goTo('tempahan')">
-      <i class="fas fa-calendar-check"></i><span class="lbl">Tempahan</span>
+    <div class="nav-item" data-sec="inisiatif" onclick="goTo('inisiatif')">
+      <i class="fas fa-lightbulb"></i><span class="lbl">Pengurusan Inisiatif</span>
     </div>
-    <div class="nav-item" data-sec="mohon-cuti" onclick="goTo('mohon-cuti')">
-      <i class="fas fa-umbrella-beach"></i><span class="lbl">Mohon Cuti</span>
+    <div class="nav-item" data-sec="laporan-inisiatif" onclick="goTo('laporan-inisiatif')">
+      <i class="fas fa-chart-line"></i><span class="lbl">Laporan Kemajuan</span>
     </div>
-    <div class="nav-item" data-sec="eizin" onclick="goTo('eizin')">
-      <i class="fas fa-door-open"></i><span class="lbl">E-Izin Keluar</span>
+    <div class="nav-item" data-sec="aktiviti-inisiatif" onclick="goTo('aktiviti-inisiatif')">
+      <i class="fas fa-calendar-days"></i><span class="lbl">Aktiviti Inisiatif</span>
     </div>
     <div class="nav-item" data-sec="profil" onclick="goTo('profil')">
       <i class="fas fa-user-circle"></i><span class="lbl">Profil Saya</span>
@@ -319,14 +330,14 @@
         <div class="card-hdr"><div class="card-ttl"><i class="fas fa-bolt"></i> Tindakan Pantas</div></div>
         <div class="card-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <button class="btn btn-blue" style="justify-content:center;padding:14px" onclick="goTo('tempahan')">
-              <i class="fas fa-calendar-plus"></i> Buat Tempahan
+            <button class="btn btn-blue" style="justify-content:center;padding:14px" onclick="goTo('inisiatif')">
+              <i class="fas fa-lightbulb"></i> Kemas Kini Inisiatif
             </button>
-            <button class="btn btn-success" style="justify-content:center;padding:14px" onclick="goTo('mohon-cuti')">
-              <i class="fas fa-umbrella-beach"></i> Mohon Cuti
+            <button class="btn btn-success" style="justify-content:center;padding:14px" onclick="goTo('laporan-inisiatif')">
+              <i class="fas fa-file-lines"></i> Hantar Laporan
             </button>
-            <button class="btn btn-warning" style="justify-content:center;padding:14px" onclick="goTo('eizin')">
-              <i class="fas fa-door-open"></i> Daftar E-Izin
+            <button class="btn btn-warning" style="justify-content:center;padding:14px" onclick="goTo('aktiviti-inisiatif')">
+              <i class="fas fa-calendar-days"></i> Lihat Aktiviti
             </button>
             <button class="btn btn-primary" style="justify-content:center;padding:14px" onclick="goTo('inbox')">
               <i class="fas fa-inbox"></i> Peti Masuk
@@ -334,11 +345,29 @@
           </div>
           <div class="alert al-info mt-3">
             <i class="fas fa-info-circle"></i>
-            <div>Sistem portal ini merupakan platform bersepadu untuk pengurusan perkhidmatan kakitangan SSMJ. Untuk bantuan, hubungi IT Helpdesk <strong>ext. 1234</strong>.</div>
+            <div>Portal ini menyokong pengurusan, penyelarasan dan pemantauan pelaksanaan inisiatif setiap kementerian secara tersusun, telus dan berimpak.</div>
           </div>
         </div>
       </div>
     </div>
+  </section>
+
+  <section class="section" id="sec-inisiatif">
+    <div class="ph"><h1><i class="fas fa-lightbulb" style="color:var(--gold);margin-right:10px"></i>Pengurusan Inisiatif</h1><p>Urus dan kemas kini maklumat inisiatif kementerian anda.</p></div>
+    <div class="grid-2">
+      <div class="card"><div class="card-hdr"><div class="card-ttl"><i class="fas fa-bullseye"></i> Fokus Portal</div></div><div class="card-body"><p>Memastikan setiap inisiatif direkodkan, dipantau dan dilaporkan mengikut kemajuan sebenar kementerian atau agensi.</p><ul class="mini-list"><li>Rekod inisiatif dan sasaran</li><li>Pantau kemajuan pelaksanaan</li><li>Selaras tindakan antara agensi</li><li>Sediakan laporan untuk semakan SSMJ</li></ul></div></div>
+      <div class="card"><div class="card-hdr"><div class="card-ttl"><i class="fas fa-clipboard-check"></i> Tindakan Inisiatif</div></div><div class="card-body"><button class="btn btn-blue" style="width:100%;justify-content:center;margin-bottom:10px" onclick="goTo('laporan-inisiatif')"><i class="fas fa-file-circle-plus"></i> Hantar kemas kini pelaksanaan</button><button class="btn btn-success" style="width:100%;justify-content:center" onclick="goTo('aktiviti-inisiatif')"><i class="fas fa-calendar-days"></i> Semak aktiviti berkaitan</button></div></div>
+    </div>
+  </section>
+
+  <section class="section" id="sec-laporan-inisiatif">
+    <div class="ph"><h1><i class="fas fa-chart-line" style="color:var(--blue-lt);margin-right:10px"></i>Laporan Kemajuan</h1><p>Ringkasan kemajuan pelaksanaan inisiatif kementerian.</p></div>
+    <div class="card"><div class="card-body"><div class="stats"><div class="stat-card"><div class="stat-icon si-blue"><i class="fas fa-list-check"></i></div><div><div class="stat-num" id="initiativeReportCount">0</div><div class="stat-lbl">Inisiatif Direkodkan</div></div></div><div class="stat-card"><div class="stat-icon si-green"><i class="fas fa-chart-simple"></i></div><div><div class="stat-num" id="initiativeProgressCount">0%</div><div class="stat-lbl">Kemajuan Keseluruhan</div></div></div><div class="stat-card"><div class="stat-icon si-orange"><i class="fas fa-clock"></i></div><div><div class="stat-num" id="initiativePendingCount">0</div><div class="stat-lbl">Menunggu Semakan</div></div></div></div><p class="alert al-info mt-3"><i class="fas fa-info-circle"></i> Kemas kini yang dihantar akan disemak dan diluluskan oleh Sekretariat Sabah Maju Jaya.</p></div></div>
+  </section>
+
+  <section class="section" id="sec-aktiviti-inisiatif">
+    <div class="ph"><h1><i class="fas fa-calendar-days" style="color:var(--gold);margin-right:10px"></i>Aktiviti Inisiatif</h1><p>Aktiviti, mesyuarat dan tarikh penting berkaitan pelaksanaan inisiatif.</p></div>
+    <div class="card"><div class="card-body" id="initiativeActivityList"><p class="empty-state">Tiada aktiviti baharu direkodkan.</p></div></div>
   </section>
 
   <!-- ─────────────────────── INBOX ─────────────────────── -->
