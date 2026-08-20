@@ -1,133 +1,1209 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ms">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Kementerian | Blue Economic Agency</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="icon" href="assets/LOGO%20SMJ.jpg" type="image/jpeg" />
-    <link rel="stylesheet" href="styles.css?v=20260819j" />
-  </head>
-  <body data-page="dashboard" class="public-dashboard-page">
-    <header class="hero public-dashboard-hero">
-      <nav class="navbar container">
-        <a href="index.html" class="brand">
-          <span class="brand-mark" aria-hidden="true"><img src="assets/LOGO%20SMJ.jpg" alt="" class="brand-logo" /></span>
-          <span>Bahagian Pengurusan &amp; Inisiatif, Sekretariat Sabah Maju Jaya</span>
-        </a>
-        <div class="nav-links">
-          <a class="nav-link" href="index.html">Halaman Utama</a>
-          <a id="public-admin-link" class="nav-link nav-link-cta" href="login.html">Log Masuk Admin</a>
-        </div>
-      </nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>SSMJ — Sistem Integrasi Data</title>
+  <link rel="icon" type="image/jpeg" href="assets/LOGO SMJ.jpg" />
 
-      <div class="container public-hero-content">
-        <p class="eyebrow">Dashboard Laporan Kementerian</p>
-        <h1 id="dashboard-title">Memuatkan laporan...</h1>
-        <p id="dashboard-summary" class="dashboard-summary"></p>
-        <p id="dashboard-session" class="dashboard-session"></p>
-        <div class="public-hero-meta" aria-label="Ringkasan pantas kementerian">
-          <p class="hero-meta-chip">
-            Kementerian Aktif
-            <span id="hero-department-chip">Memuatkan...</span>
-          </p>
-          <p class="hero-meta-chip">
-            Kemajuan Semasa
-            <span id="hero-progress-chip">--%</span>
-          </p>
-          <p class="hero-meta-chip">
-            Status Program
-            <span id="hero-status-chip">Memuatkan...</span>
-          </p>
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0d2540" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="SSMJ Portal" />
+  <link rel="apple-touch-icon" href="assets/LOGO SMJ.jpg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+
+<!-- ══ TOAST AREA ══ -->
+<div class="toast-area" id="toastArea"></div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- Generic Approval Modal -->
+<div class="modal-bg" id="mdApproval">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-ttl" id="mdApprTitle"><i class="fas fa-clipboard-check"></i> Tindakan Kelulusan</div>
+      <button class="modal-close" onclick="closeModal('mdApproval')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="alert al-info" id="mdApprDetail" style="margin-bottom:18px"></div>
+      <div class="fg">
+        <label>Tindakan <span style="color:var(--red)">*</span></label>
+        <select class="fc" id="mdApprAction">
+          <option value="">— Pilih tindakan —</option>
+          <option value="lulus">✅ Luluskan Permohonan</option>
+          <option value="tolak">❌ Tolak Permohonan</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Catatan / Alasan <span id="mdApprReqNote">(diperlukan jika ditolak)</span></label>
+        <textarea class="fc" id="mdApprReason" placeholder="Masukkan catatan atau alasan bagi keputusan anda..." rows="4"></textarea>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('mdApproval')"><i class="fas fa-times"></i> Batal</button>
+      <button class="btn btn-primary" onclick="submitApproval()"><i class="fas fa-check"></i> Sahkan Keputusan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Profiler Modal -->
+<div class="modal-bg" id="mdAddProfile">
+  <div class="modal wide">
+    <div class="modal-hdr">
+      <div class="modal-ttl"><i class="fas fa-user-plus"></i> Daftar Profil Baharu</div>
+      <button class="modal-close" onclick="closeModal('mdAddProfile')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row mb-4">
+        <div class="fg"><label>No. Pekerja <span style="color:var(--red)">*</span></label><input class="fc" id="pNoPekerja" placeholder="cth: SSM006" /></div>
+        <div class="fg"><label>Nama Penuh <span style="color:var(--red)">*</span></label><input class="fc" id="pNama" placeholder="Nama penuh mengikut IC" /></div>
+      </div>
+      <div class="form-row mb-4">
+        <div class="fg"><label>Jawatan <span style="color:var(--red)">*</span></label><input class="fc" id="pJawatan" placeholder="cth: Pegawai Tadbir" /></div>
+        <div class="fg"><label>Jabatan / Bahagian <span style="color:var(--red)">*</span></label>
+          <select class="fc" id="pJabatan">
+            <option value="">— Pilih jabatan —</option>
+            <option>IT & Komunikasi</option><option>Kewangan</option><option>Sumber Manusia</option>
+            <option>Pentadbiran</option><option>Perkhidmatan Am</option><option>Operasi</option>
+          </select>
         </div>
       </div>
-    </header>
+      <div class="form-row mb-4">
+        <div class="fg"><label>Alamat E-mel <span style="color:var(--red)">*</span></label><input class="fc" id="pEmail" type="email" placeholder="nama@ssmj.gov.my" /></div>
+        <div class="fg"><label>No. Telefon Pejabat</label><input class="fc" id="pTel" placeholder="07-XXXXXXX" /></div>
+      </div>
+      <div class="form-row cols-1">
+        <div class="fg"><label>Status</label>
+          <select class="fc" id="pStatus"><option value="aktif">Aktif</option><option value="tidak-aktif">Tidak Aktif</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('mdAddProfile')"><i class="fas fa-times"></i> Batal</button>
+      <button class="btn btn-success" onclick="submitProfile()"><i class="fas fa-save"></i> Simpan Profil</button>
+    </div>
+  </div>
+</div>
 
-    <main class="public-dashboard-main">
-      <section class="section container public-kpi-grid public-kpi-bento">
-        <article class="card public-kpi-card card-status">
-          <p class="eyebrow">Status Semasa</p>
-          <h3 id="status-pill" class="pill"></h3>
-          <p id="status-text" class="dashboard-copy"></p>
-          <p id="updated-info" class="dashboard-copy"></p>
-          <p id="officer-info" class="dashboard-copy"></p>
-        </article>
+<!-- Inbox Read Modal -->
+<div class="modal-bg" id="mdInbox">
+  <div class="modal modal-inbox-wide">
+    <div class="modal-hdr">
+      <div class="modal-ttl"><i class="fas fa-envelope-open-text" style="color:var(--primary)"></i> <span id="mdInboxSubject">Mesej</span></div>
+      <button class="modal-close" onclick="closeModal('mdInbox')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" style="padding:0">
+      <!-- Gambar lampiran (paparan penuh, boleh scroll jika tinggi) -->
+      <div id="mdInboxImgWrap" style="display:none;background:#f3f4f6;border-bottom:1px solid var(--border);text-align:center;padding:16px 24px">
+        <img id="mdInboxImg" src="" alt="Lampiran Notis"
+          style="max-width:100%;max-height:420px;width:auto;height:auto;object-fit:contain;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.13);display:inline-block" />
+      </div>
+      <!-- Meta info -->
+      <div style="padding:18px 24px 12px;border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+        <span class="inbox-meta-chip"><i class="fas fa-user"></i> <span id="mdInboxSender"></span></span>
+        <span class="inbox-meta-chip"><i class="fas fa-calendar-alt"></i> <span id="mdInboxDate"></span></span>
+        <span class="inbox-meta-chip"><i class="fas fa-clock"></i> <span id="mdInboxTime"></span></span>
+      </div>
+      <!-- Kandungan notis -->
+      <div style="padding:22px 24px">
+        <div class="detail-body" id="mdInboxBody"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('mdInbox')"><i class="fas fa-times"></i> Tutup</button>
+    </div>
+  </div>
+</div>
 
-        <article class="card public-kpi-card card-summary">
-          <p class="eyebrow">Laporan Ringkasan</p>
-          <h3 id="summary-title">Ringkasan Inisiatif</h3>
-          <p id="summary-text" class="dashboard-copy"></p>
-          <ul id="summary-points" class="mini-list summary-points"></ul>
-        </article>
+<!-- ══ SIDEBAR OVERLAY (mobile) ══ -->
+<div class="sb-overlay" id="sbOverlay" onclick="closeSidebar()"></div>
 
-        <article class="card public-kpi-card card-pie">
-          <p class="eyebrow">Peratus Pelaksanaan Inisiatif</p>
-          <div class="public-chart-wrap">
-            <canvas id="pie-chart-canvas" width="280" height="220" aria-label="Carta pai pelaksanaan"></canvas>
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-org-logo-wrap">
+      <img src="assets/LOGO SMJ.jpg" alt="Logo Organisasi" class="sb-org-logo" id="sbOrgLogo">
+    </div>
+    <div class="sb-logo-icon"><i class="fas fa-database"></i></div>
+    <div class="sb-logo-text">
+      <div class="main">SSMJ Portal</div>
+      <div class="sub">Integrasi Data</div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="nav-section-lbl">Menu Utama</div>
+
+    <div class="nav-item active" data-sec="home" onclick="goTo('home')">
+      <i class="fas fa-home"></i><span class="lbl">Papan Pemuka</span>
+    </div>
+    <div class="nav-item" data-sec="inbox" onclick="goTo('inbox')">
+      <i class="fas fa-inbox"></i><span class="lbl">Peti Masuk</span>
+      <span class="nav-badge" id="sbInboxBadge">3</span>
+    </div>
+    <div class="nav-item" data-sec="tempahan" onclick="goTo('tempahan')">
+      <i class="fas fa-calendar-check"></i><span class="lbl">Tempahan</span>
+    </div>
+    <div class="nav-item" data-sec="mohon-cuti" onclick="goTo('mohon-cuti')">
+      <i class="fas fa-umbrella-beach"></i><span class="lbl">Mohon Cuti</span>
+    </div>
+    <div class="nav-item" data-sec="eizin" onclick="goTo('eizin')">
+      <i class="fas fa-door-open"></i><span class="lbl">E-Izin Keluar</span>
+    </div>
+    <div class="nav-item" data-sec="profil" onclick="goTo('profil')">
+      <i class="fas fa-user-circle"></i><span class="lbl">Profil Saya</span>
+    </div>
+
+    <!-- KEWANGAN -->
+    <div id="kewanganNav">
+    <div class="admin-sep"></div>
+    <div class="admin-hdr" style="color:var(--green, #27ae60)"><i class="fas fa-wallet"></i> Kewangan</div>
+    <div class="nav-item" data-sec="slip-gaji" onclick="goTo('slip-gaji')">
+      <i class="fas fa-file-invoice-dollar"></i><span class="lbl">Paparan Slip Gaji</span>
+    </div>
+    <div class="nav-item" data-sec="tuntutan" onclick="goTo('tuntutan')">
+      <i class="fas fa-hand-holding-usd"></i><span class="lbl">Tuntutan</span>
+    </div>
+    </div>
+
+    <!-- HR ONLY -->
+    <div id="hrNav" style="display:none">
+      <div class="admin-sep"></div>
+      <div class="admin-hdr" style="color:#16a085"><i class="fas fa-users-cog"></i> Pengurusan HR</div>
+      <div class="nav-item" data-sec="hr-kepala-vot" onclick="goTo('hr-kepala-vot')">
+        <i class="fas fa-code-branch"></i><span class="lbl">Kepala Vot</span>
+      </div>
+      <div class="nav-item" data-sec="hr-slip-gaji" onclick="goTo('hr-slip-gaji')">
+        <i class="fas fa-file-invoice-dollar"></i><span class="lbl">Terbit Slip Gaji</span>
+      </div>
+      <div class="nav-item" data-sec="hr-tuntutan" onclick="goTo('hr-tuntutan')">
+        <i class="fas fa-tasks"></i><span class="lbl">Urus Tuntutan</span>
+      </div>
+    </div>
+
+    <!-- ADMIN ONLY -->
+    <div id="adminNav" style="display:none">
+      <div class="admin-sep"></div>
+      <div class="admin-hdr"><i class="fas fa-shield-alt"></i> Pentadbir</div>
+
+      <div class="nav-item" data-sec="profiler" onclick="goTo('profiler')">
+        <i class="fas fa-id-card"></i><span class="lbl">Senarai Kakitangan</span>
+      </div>
+      <div class="nav-item" data-sec="lulus-cuti" onclick="goTo('lulus-cuti')">
+        <i class="fas fa-clipboard-check"></i><span class="lbl">Luluskan Permohonan Cuti</span>
+      </div>
+      <div class="nav-item" data-sec="lulus-eizin" onclick="goTo('lulus-eizin')">
+        <i class="fas fa-user-check"></i><span class="lbl">Luluskan Keluar (E-Izin)</span>
+      </div>
+      <div class="nav-item" data-sec="lulus-tempahan" onclick="goTo('lulus-tempahan')">
+        <i class="fas fa-calendar-check"></i><span class="lbl">Luluskan Tempahan</span>
+      </div>
+      <div class="nav-item" data-sec="daftar-pengguna" onclick="goTo('daftar-pengguna')">
+        <i class="fas fa-user-plus"></i><span class="lbl">Daftar Pengguna</span>
+      </div>
+      <div class="nav-item" data-sec="notis" onclick="goTo('notis')">
+        <i class="fas fa-bullhorn"></i><span class="lbl">Notis &amp; Pengumuman</span>
+      </div>
+      <div class="nav-item" data-sec="urus-pilihan" onclick="goTo('urus-pilihan')">
+        <i class="fas fa-sliders-h"></i><span class="lbl">Urus Pilihan Sistem</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar" id="sbAvatar">AF</div>
+      <div>
+        <div class="sb-user-name" id="sbName">Ahmad Faris</div>
+        <div class="sb-user-dept" id="sbDept">IT & Komunikasi</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <div class="top-left">
+    <button class="sb-toggle" id="sbToggle" onclick="toggleSidebar()" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    <div>
+      <div class="top-title" id="topTitle">Papan Pemuka</div>
+      <div class="top-sub" id="topSub">Portal SSMJ &rsaquo; Utama</div>
+    </div>
+  </div>
+  <div class="top-right">
+    <div class="top-date" id="topDate"><i class="fas fa-calendar-alt"></i> Memuat...</div>
+    <div class="notif-wrap">
+      <div class="notif-btn" onclick="goTo('inbox')" title="Peti Masuk">
+        <i class="fas fa-bell"></i>
+      </div>
+      <div class="notif-dot" id="notifDot"></div>
+    </div>
+    <div class="user-chip" onclick="toggleDD()" id="userChip">
+      <div class="chip-avatar" id="chipAvatar">AF</div>
+      <div>
+        <div class="chip-name" id="chipName">Ahmad Faris</div>
+        <div class="chip-role" id="chipRole">Pengguna</div>
+      </div>
+      <i class="fas fa-chevron-down chip-arrow"></i>
+      <div class="user-dropdown" id="userDD">
+        <div class="dd-item" onclick="goTo('profil')"><i class="fas fa-user"></i> Profil Saya</div>
+        <div class="dd-item"><i class="fas fa-cog"></i> Tetapan</div>
+        <div class="dd-sep"></div>
+        <div class="dd-item logout" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Log Keluar</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ MAIN CONTENT ══ -->
+<main class="main">
+
+  <!-- ─────────────────────── HOME ─────────────────────── -->
+  <section class="section active" id="sec-home">
+    <div id="homeProfilAlert" class="alert al-warn mb-6" style="display:none">
+      <i class="fas fa-exclamation-triangle"></i>
+      <div><strong>Profil anda belum lengkap!</strong> Sila pergi ke <a href="javascript:goTo('profil')" style="color:inherit;font-weight:700;text-decoration:underline">Profil Saya</a> untuk melengkapkan maklumat anda dalam sistem.</div>
+    </div>
+    <div class="welcome-banner">
+      <div class="wb-tag"><i class="fas fa-star"></i> Selamat Datang</div>
+      <h2 id="wbName">Ahmad Faris bin Hassan</h2>
+      <p id="wbJawatan">Pembantu Tadbir &nbsp;|&nbsp; IT & Komunikasi</p>
+      <div class="wb-date"><i class="fas fa-calendar-day"></i> <span id="wbDate"></span></div>
+    </div>
+
+    <div class="stats" id="statsGrid">
+      <div class="stat-card" id="scInbox" style="cursor:pointer" onclick="goTo('inbox')">
+        <div class="stat-icon si-blue"><i class="fas fa-inbox"></i></div>
+        <div><div class="stat-num" id="stInbox">0</div><div class="stat-lbl" id="stInboxLbl">Mesej Belum Dibaca</div></div>
+      </div>
+      <div class="stat-card" id="scTempahan" style="cursor:pointer" onclick="goTo('tempahan')">
+        <div class="stat-icon si-green"><i class="fas fa-calendar-check"></i></div>
+        <div><div class="stat-num" id="stTempahan">0</div><div class="stat-lbl" id="stTempahanLbl">Tempahan Aktif</div></div>
+      </div>
+      <div class="stat-card" id="scCuti" style="cursor:pointer" onclick="goTo('mohon-cuti')">
+        <div class="stat-icon si-orange"><i class="fas fa-umbrella-beach"></i></div>
+        <div><div class="stat-num" id="stCuti">0</div><div class="stat-lbl" id="stCutiLbl">Cuti Menunggu Kelulusan</div></div>
+      </div>
+      <div class="stat-card" id="scEizin" style="cursor:pointer" onclick="goTo('eizin')">
+        <div class="stat-icon si-red"><i class="fas fa-door-open"></i></div>
+        <div><div class="stat-num" id="stEizin">0</div><div class="stat-lbl" id="stEizinLbl">E-Izin Menunggu Kelulusan</div></div>
+      </div>
+      <div class="stat-card" id="scPelaksanaan">
+        <div class="stat-icon si-blue"><i class="fas fa-chart-line"></i></div>
+        <div><div class="stat-num" id="stPelaksanaan">0</div><div class="stat-lbl">Jumlah Pelaksanaan Inisiatif</div></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Recent Activity -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-ttl"><i class="fas fa-history"></i> Aktiviti Terkini</div>
+        </div>
+        <div class="card-body" id="homeAktiviti">
+          <div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">
+            <i class="fas fa-spinner fa-spin" style="font-size:24px;display:block;margin-bottom:10px;opacity:.4"></i>
+            Memuatkan...
           </div>
-          <p id="pie-chart-label" class="dashboard-copy"></p>
-        </article>
+        </div>
+      </div>
 
-        <article class="card public-kpi-card card-progress">
-          <p class="eyebrow">Peratus Pencapaian Program</p>
-          <div class="public-chart-wrap">
-            <canvas id="progress-chart-canvas" width="480" height="240" aria-label="Graf pelaksanaan program"></canvas>
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-hdr"><div class="card-ttl"><i class="fas fa-bolt"></i> Tindakan Pantas</div></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <button class="btn btn-blue" style="justify-content:center;padding:14px" onclick="goTo('tempahan')">
+              <i class="fas fa-calendar-plus"></i> Buat Tempahan
+            </button>
+            <button class="btn btn-success" style="justify-content:center;padding:14px" onclick="goTo('mohon-cuti')">
+              <i class="fas fa-umbrella-beach"></i> Mohon Cuti
+            </button>
+            <button class="btn btn-warning" style="justify-content:center;padding:14px" onclick="goTo('eizin')">
+              <i class="fas fa-door-open"></i> Daftar E-Izin
+            </button>
+            <button class="btn btn-primary" style="justify-content:center;padding:14px" onclick="goTo('inbox')">
+              <i class="fas fa-inbox"></i> Peti Masuk
+            </button>
           </div>
-          <p id="progress-text" class="dashboard-metric"></p>
-        </article>
-      </section>
+          <div class="alert al-info mt-3">
+            <i class="fas fa-info-circle"></i>
+            <div>Sistem portal ini merupakan platform bersepadu untuk pengurusan perkhidmatan kakitangan SSMJ. Untuk bantuan, hubungi IT Helpdesk <strong>ext. 1234</strong>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <section class="section container">
-        <article class="card public-kpi-card calendar-card">
-          <div class="section-heading public-section-heading">
-            <p class="eyebrow">Takwim Aktiviti</p>
-            <h2 id="activity-calendar-title">Takwim Aktiviti</h2>
-          </div>
-          <p id="activity-alert" class="calendar-alert"></p>
-          <div class="activity-calendar-shell">
-            <div id="activity-calendar-grid" class="activity-calendar-grid" aria-label="Kalendar aktiviti"></div>
-            <div>
-              <p class="calendar-subtitle">Aktiviti Terdekat</p>
-              <ul id="activity-upcoming-list" class="mini-list activity-upcoming-list"></ul>
+  <!-- ─────────────────────── INBOX ─────────────────────── -->
+  <section class="section" id="sec-inbox">
+    <div class="ph"><h1><i class="fas fa-inbox" style="color:var(--blue-lt);margin-right:10px"></i>Peti Masuk</h1><p>Mesej dan notifikasi terkini untuk anda.</p></div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-envelope"></i> Semua Mesej</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="badge b-info" id="inboxCountBadge">5 mesej</span>
+          <button class="btn btn-outline btn-xs" onclick="bacaSemua()" title="Tandakan semua mesej sebagai telah dibaca">
+            <i class="fas fa-check-double"></i> Baca Semua
+          </button>
+        </div>
+      </div>
+      <div id="inboxList"></div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── TEMPAHAN ─────────────────────── -->
+  <section class="section" id="sec-tempahan">
+    <div class="ph"><h1><i class="fas fa-calendar-check" style="color:var(--blue-lt);margin-right:10px"></i>Tempahan</h1><p>Buat dan urus tempahan bilik atau kemudahan pejabat.</p></div>
+
+    <!-- New Booking Form -->
+    <div class="card mb-6">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-plus-circle"></i> Buat Tempahan Baharu</div></div>
+      <div class="card-body">
+        <form onsubmit="submitTempahan(event)">
+          <div class="form-row mb-4">
+            <div class="fg"><label>Nama Ruang / Kemudahan <span style="color:var(--red)">*</span></label>
+              <select class="fc" id="tRuang" required>
+                <option value="">— Pilih ruang —</option>
+              </select>
+            </div>
+            <div class="fg"><label>Tarikh Tempahan <span style="color:var(--red)">*</span></label>
+              <input class="fc" type="date" id="tTarikh" required />
             </div>
           </div>
-        </article>
-      </section>
-
-      <section class="section container public-analytics-grid">
-        <article class="card public-kpi-card card-district">
-          <p class="eyebrow">Graf Peratusan Pelaksanaan Program</p>
-          <div class="public-chart-wrap">
-            <canvas id="district-chart-canvas" width="480" height="260" aria-label="Graf daerah Sabah"></canvas>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Masa Mula <span style="color:var(--red)">*</span></label><input class="fc" type="time" id="tMula" required /></div>
+            <div class="fg"><label>Masa Tamat <span style="color:var(--red)">*</span></label><input class="fc" type="time" id="tTamat" required /></div>
           </div>
-        </article>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Tujuan / Perkara <span style="color:var(--red)">*</span></label><input class="fc" id="tTujuan" placeholder="cth: Mesyuarat Pasukan IT" required /></div>
+            <div class="fg"><label>Bilangan Peserta</label><input class="fc" type="number" id="tBilangan" placeholder="cth: 10" min="1" /></div>
+          </div>
+          <div class="fg form-row cols-1">
+            <textarea class="fc" id="tNota" placeholder="Nota tambahan (peralatan yang diperlukan, dll.)..." rows="2"></textarea>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Hantar Permohonan</button>
+            <button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Set Semula</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-        <article class="card public-kpi-card card-map">
-          <p class="eyebrow">Peta Pelaksanaan Program Sabah</p>
-          <div class="sabah-map" id="sabah-map">
-            <svg viewBox="0 0 600 360" role="img" aria-label="Peta ringkas Sabah">
-              <path d="M72 197L99 136L155 100L230 92L280 62L352 79L418 124L491 156L548 212L518 274L438 309L347 319L283 295L234 316L168 292L119 262L96 224Z" class="sabah-shape"></path>
+    <!-- Booking history -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-list"></i> Senarai Tempahan Saya</div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Ruang</th><th>Tarikh</th><th>Masa</th><th>Tujuan</th><th>Peserta</th><th>Status</th><th>Surat</th></tr></thead>
+          <tbody id="tempahanTbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── MOHON CUTI ─────────────────────── -->
+  <section class="section" id="sec-mohon-cuti">
+    <div class="ph"><h1><i class="fas fa-umbrella-beach" style="color:var(--blue-lt);margin-right:10px"></i>Mohon Cuti</h1><p>Kemukakan permohonan cuti dan semak status permohonan anda.</p></div>
+
+    <div class="card mb-6">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-file-alt"></i> Borang Permohonan Cuti</div></div>
+      <div class="card-body">
+        <div class="alert al-info mb-4">
+          <i class="fas fa-info-circle"></i>
+          <div>Baki cuti tahunan anda: <strong>14 hari</strong>. Permohonan perlu dikemukakan sekurang-kurangnya <strong>3 hari</strong> sebelum tarikh cuti (kecuali cuti kecemasan).</div>
+        </div>
+        <form onsubmit="submitCuti(event)">
+          <div class="form-row mb-4">
+            <div class="fg"><label>Jenis Cuti <span style="color:var(--red)">*</span></label>
+              <select class="fc" id="cJenis" required>
+                <option value="">— Pilih jenis cuti —</option>
+              </select>
+            </div>
+            <div class="fg"><label>Pengganti Tugas <span style="color:var(--red)">*</span></label>
+              <select class="fc" id="cPengganti" required>
+                <option value="">— Pilih pengganti —</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Tarikh Mula <span style="color:var(--red)">*</span></label><input class="fc" type="date" id="cMula" required onchange="kiraCutiHari()" /></div>
+            <div class="fg"><label>Tarikh Tamat <span style="color:var(--red)">*</span></label><input class="fc" type="date" id="cTamat" required onchange="kiraCutiHari()" /></div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Jumlah Hari</label><input class="fc" id="cHari" placeholder="Dikira automatik" readonly style="background:#f9fafc" /></div>
+            <div class="fg"><label>Alamat Semasa Cuti</label><input class="fc" id="cAlamat" placeholder="cth: No. 12, Jalan Bestari, Johor Bahru" /></div>
+          </div>
+          <div class="fg form-row cols-1 mb-4">
+            <div class="fg"><label>Sebab / Alasan Permohonan <span style="color:var(--red)">*</span></label>
+              <textarea class="fc" id="cSebab" placeholder="Nyatakan sebab permohonan cuti anda..." required rows="3"></textarea>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Hantar Permohonan</button>
+            <button type="reset" class="btn btn-secondary" onclick="document.getElementById('cHari').value=''"><i class="fas fa-undo"></i> Set Semula</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-history"></i> Sejarah Permohonan Cuti</div></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Jenis Cuti</th><th>Tarikh Mula</th><th>Tarikh Tamat</th><th>Hari</th><th>Pengganti</th><th>Sebab</th><th>Status</th><th>Surat</th></tr></thead>
+          <tbody id="cutiTbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── E-IZIN ─────────────────────── -->
+  <section class="section" id="sec-eizin">
+    <div class="ph"><h1><i class="fas fa-door-open" style="color:var(--blue-lt);margin-right:10px"></i>E-Izin Keluar Pejabat</h1><p>Daftar permohonan keluar pejabat atas urusan rasmi atau peribadi.</p></div>
+
+    <div class="card mb-6">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-file-signature"></i> Borang E-Izin Baharu</div></div>
+      <div class="card-body">
+        <div class="alert al-warn mb-4">
+          <i class="fas fa-exclamation-triangle"></i>
+          <div>Sila daftar E-Izin <strong>sebelum keluar</strong> dari pejabat. Keluar tanpa kebenaran boleh diambil tindakan tatatertib.</div>
+        </div>
+        <form onsubmit="submitEizin(event)">
+          <div class="form-row mb-4">
+            <div class="fg"><label>Tarikh Keluar <span style="color:var(--red)">*</span></label><input class="fc" type="date" id="eTarikh" required /></div>
+            <div class="fg"><label>Jenis Urusan <span style="color:var(--red)">*</span></label>
+              <select class="fc" id="eJenis" required>
+                <option value="">— Pilih jenis —</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Masa Keluar (Anggaran) <span style="color:var(--red)">*</span></label><input class="fc" type="time" id="eMasaKeluar" required /></div>
+            <div class="fg"><label>Masa Dijangka Balik <span style="color:var(--red)">*</span></label><input class="fc" type="time" id="eMasaBalik" required /></div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Destinasi / Lokasi <span style="color:var(--red)">*</span></label><input class="fc" id="eDestinasi" placeholder="cth: JTM Johor Bahru, Jalan Tun Abdul Razak" required /></div>
+            <div class="fg"><label>Tujuan Terperinci</label><input class="fc" id="eTujuan" placeholder="cth: Menghadiri mesyuarat teknikal" /></div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-warning"><i class="fas fa-paper-plane"></i> Hantar E-Izin</button>
+            <button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Set Semula</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-list"></i> Rekod E-Izin Saya</div></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Tarikh</th><th>Masa Keluar</th><th>Masa Balik</th><th>Jenis Urusan</th><th>Destinasi</th><th>Status</th></tr></thead>
+          <tbody id="eizinTbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── SLIP GAJI (Pengguna) ─────────────────────── -->
+  <section class="section" id="sec-slip-gaji">
+    <div class="ph"><h1><i class="fas fa-file-invoice-dollar" style="color:#27ae60;margin-right:10px"></i>Paparan Slip Gaji</h1><p>Semak dan cetak slip gaji bulanan anda.</p></div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-list"></i> Senarai Slip Gaji</div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Bulan</th><th>Tahun</th><th>Gaji Pokok (RM)</th><th>Elaun (RM)</th><th>Potongan (RM)</th><th>Gaji Bersih (RM)</th><th>Cetak</th></tr></thead>
+          <tbody id="slipGajiTbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── TUNTUTAN (Pengguna) ─────────────────────── -->
+  <section class="section" id="sec-tuntutan">
+    <div class="ph"><h1><i class="fas fa-hand-holding-usd" style="color:#27ae60;margin-right:10px"></i>Tuntutan</h1><p>Kemukakan dan semak status tuntutan perjalanan, lebih masa dan lain-lain.</p></div>
+
+    <div class="card mb-6">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-plus-circle"></i> Borang Tuntutan Baharu</div></div>
+      <div class="card-body">
+        <form onsubmit="submitTuntutan(event)">
+          <div class="form-row mb-4">
+            <div class="fg"><label>Jenis Tuntutan <span style="color:var(--red)">*</span></label>
+              <select class="fc" id="tuntJenis" required>
+                <option value="">— Pilih jenis —</option>
+                <option value="Tuntutan Perjalanan">Tuntutan Perjalanan</option>
+                <option value="Tuntutan Lebih Masa">Tuntutan Lebih Masa</option>
+                <option value="Tuntutan Pengangkutan">Tuntutan Pengangkutan</option>
+                <option value="Tuntutan Elaun Harian">Tuntutan Elaun Harian</option>
+                <option value="Lain-lain">Lain-lain</option>
+              </select>
+            </div>
+            <div class="fg"><label>Tarikh Tuntutan <span style="color:var(--red)">*</span></label><input class="fc" type="date" id="tuntTarikh" required /></div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Jumlah (RM) <span style="color:var(--red)">*</span></label><input class="fc" type="number" id="tuntJumlah" min="0" step="0.01" placeholder="0.00" required /></div>
+            <div class="fg"><label>Keterangan <span style="color:var(--red)">*</span></label><input class="fc" id="tuntKeterangan" placeholder="Huraikan tuntutan anda" required /></div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> Hantar Tuntutan</button>
+            <button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Set Semula</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-list"></i> Rekod Tuntutan Saya</div></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Tarikh</th><th>Jenis Tuntutan</th><th>Jumlah (RM)</th><th>Keterangan</th><th>Status</th><th>Cetak</th></tr></thead>
+          <tbody id="tuntutanTbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── HR: KEPALA VOT ─────────────────────── -->
+  <section class="section" id="sec-hr-kepala-vot">
+    <div class="ph"><h1><i class="fas fa-code-branch" style="color:#16a085;margin-right:10px"></i>Kepala Vot</h1><p>Urus kod peruntukan belanjawan bagi Gaji, Tuntutan dan Tempahan.</p></div>
+
+    <div class="card mb-6">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-plus-circle"></i> Tambah Kod Peruntukan</div></div>
+      <div class="card-body">
+        <form onsubmit="submitKepalaVot(event)">
+          <div class="form-row mb-4">
+            <div class="fg"><label>Jenis Perbelanjaan <span style="color:var(--red)">*</span></label>
+              <select class="fc" id="kvJenis" required>
+                <option value="">— Pilih jenis —</option>
+                <option value="Gaji">Gaji</option>
+                <option value="Tuntutan">Tuntutan</option>
+                <option value="Tempahan">Tempahan</option>
+              </select>
+            </div>
+            <div class="fg"><label>Kod Kepala Vot <span style="color:var(--red)">*</span></label><input class="fc" id="kvKod" placeholder="cth: 11000, 22000" required /></div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Keterangan <span style="color:var(--red)">*</span></label><input class="fc" id="kvKeterangan" placeholder="cth: Emolumen - Gaji Tetap" required /></div>
+            <div class="fg"><label>Peruntukan (RM)</label><input class="fc" type="number" id="kvPeruntukan" min="0" step="0.01" placeholder="0.00" value="0" /></div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Tambah</button>
+            <button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Set Semula</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-file-invoice-dollar"></i> Kepala Vot — Gaji</div></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>#</th><th>Kod</th><th>Keterangan</th><th>Peruntukan (RM)</th><th>Tindakan</th></tr></thead>
+        <tbody id="kvGajiTbl"></tbody>
+      </table></div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-hand-holding-usd"></i> Kepala Vot — Tuntutan</div></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>#</th><th>Kod</th><th>Keterangan</th><th>Peruntukan (RM)</th><th>Tindakan</th></tr></thead>
+        <tbody id="kvTuntutanTbl"></tbody>
+      </table></div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-calendar-check"></i> Kepala Vot — Tempahan</div></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>#</th><th>Kod</th><th>Keterangan</th><th>Peruntukan (RM)</th><th>Tindakan</th></tr></thead>
+        <tbody id="kvTempahanTbl"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── HR: TERBIT SLIP GAJI ─────────────────────── -->
+  <section class="section" id="sec-hr-slip-gaji">
+    <div class="ph"><h1><i class="fas fa-file-invoice-dollar" style="color:#16a085;margin-right:10px"></i>Terbit Slip Gaji</h1><p>Jana dan terbitkan slip gaji bulanan untuk kakitangan.</p></div>
+
+    <div class="card mb-6">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-plus-circle"></i> Jana Slip Gaji Baharu</div></div>
+      <div class="card-body">
+        <form onsubmit="submitSlipGaji(event)">
+          <div class="form-row mb-4">
+            <div class="fg"><label>Nama Kakitangan <span style="color:var(--red)">*</span></label>
+              <select class="fc" id="sgUsername" required>
+                <option value="">— Pilih Kakitangan —</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Bulan <span style="color:var(--red)">*</span></label>
+              <select class="fc" id="sgBulan" required>
+                <option value="">— Pilih Bulan —</option>
+                <option>Januari</option><option>Februari</option><option>Mac</option><option>April</option>
+                <option>Mei</option><option>Jun</option><option>Julai</option><option>Ogos</option>
+                <option>September</option><option>Oktober</option><option>November</option><option>Disember</option>
+              </select>
+            </div>
+            <div class="fg"><label>Tahun <span style="color:var(--red)">*</span></label><input class="fc" type="number" id="sgTahun" min="2020" max="2099" placeholder="2026" required /></div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Gaji Pokok (RM) <span style="color:var(--red)">*</span></label><input class="fc" type="number" id="sgGajiPokok" min="0" step="0.01" placeholder="0.00" required /></div>
+            <div class="fg"><label>Elaun (RM)</label><input class="fc" type="number" id="sgElaun" min="0" step="0.01" placeholder="0.00" value="0" /></div>
+            <div class="fg"><label>Potongan (RM)</label><input class="fc" type="number" id="sgPotongan" min="0" step="0.01" placeholder="0.00" value="0" /></div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Kepala Vot (Gaji)</label>
+              <select class="fc" id="sgKepalaVot">
+                <option value="">— Pilih Kepala Vot —</option>
+              </select>
+            </div>
+            <div class="fg"><label>Catatan</label><input class="fc" id="sgCatatan" placeholder="cth: Termasuk bonus prestasi Q1" /></div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> Terbit Slip Gaji</button>
+            <button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Set Semula</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-list"></i> Rekod Slip Gaji Diterbitkan</div></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Kakitangan</th><th>Bulan</th><th>Tahun</th><th>Kepala Vot</th><th>Gaji Pokok</th><th>Elaun</th><th>Potongan</th><th>Gaji Bersih</th><th>Tindakan</th></tr></thead>
+          <tbody id="hrSlipGajiTbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── HR: URUS TUNTUTAN ─────────────────────── -->
+  <section class="section" id="sec-hr-tuntutan">
+    <div class="ph"><h1><i class="fas fa-tasks" style="color:#16a085;margin-right:10px"></i>Urus Tuntutan Kakitangan</h1><p>Semak dan proses tuntutan yang dikemukakan oleh kakitangan.</p></div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-list"></i> Semua Tuntutan</div>
+        <span class="badge b-warning" id="hrTuntutanBadge">0 menunggu</span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Nama Kakitangan</th><th>Tarikh</th><th>Jenis Tuntutan</th><th>Jumlah (RM)</th><th>Keterangan</th><th>Status</th><th>Tindakan</th></tr></thead>
+          <tbody id="hrTuntutanTbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-file-invoice-dollar"></i> Senarai Slip Gaji Diterbitkan</div></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Kakitangan</th><th>Bulan</th><th>Tahun</th><th>Kepala Vot</th><th>Gaji Pokok</th><th>Elaun</th><th>Potongan</th><th>Gaji Bersih</th><th>Tindakan</th></tr></thead>
+          <tbody id="hrTuntutanSlipTbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tuntutan Approval Modal -->
+  <div class="modal-bg" id="mdTuntutanAction">
+    <div class="modal">
+      <div class="modal-hdr">
+        <div class="modal-ttl"><i class="fas fa-tasks"></i> Proses Tuntutan</div>
+        <button class="modal-close" onclick="closeModal('mdTuntutanAction')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div id="mdTuntutanInfo" style="background:var(--bg2);border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px"></div>
+        <div class="fg">
+          <label>Catatan / Alasan (optional)</label>
+          <input class="fc" id="mdTuntutanAlasan" placeholder="Catatan kelulusan atau sebab penolakan" />
+        </div>
+      </div>
+      <div class="modal-ft">
+        <button class="btn btn-secondary" onclick="closeModal('mdTuntutanAction')"><i class="fas fa-times"></i> Batal</button>
+        <button class="btn btn-danger" onclick="prosesTuntutan('ditolak')"><i class="fas fa-times"></i> Tolak</button>
+        <button class="btn btn-success" onclick="prosesTuntutan('diluluskan')"><i class="fas fa-check"></i> Lulus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────────── PROFILER SSMJ (ADMIN) ─────────────────────── -->
+  <section class="section" id="sec-profiler">
+    <div class="ph"><h1><i class="fas fa-id-card" style="color:var(--gold-dk);margin-right:10px"></i>Profiler Kakitangan SSMJ</h1><p>Rekod dan pengurusan profil kakitangan yang berdaftar dalam sistem.</p></div>
+
+    <div class="action-bar">
+      <input class="search-box" id="profilerSearch" placeholder="Cari nama, jawatan, jabatan..." oninput="renderProfiler()" />
+      <button class="btn btn-gold" onclick="openModal('mdAddProfile')"><i class="fas fa-user-plus"></i> Daftar Profil Baharu</button>
+    </div>
+
+    <div class="prof-grid" id="profilerGrid"></div>
+  </section>
+
+  <!-- ─────────────────────── LULUS CUTI (ADMIN) ─────────────────────── -->
+  <section class="section" id="sec-lulus-cuti">
+    <div class="ph"><h1><i class="fas fa-clipboard-check" style="color:var(--gold-dk);margin-right:10px"></i>Luluskan Permohonan Cuti</h1><p>Semak dan ambil tindakan ke atas permohonan cuti kakitangan yang menunggu kelulusan.</p></div>
+
+    <div class="card mb-6">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-clock"></i> Menunggu Kelulusan</div>
+        <span class="badge b-warning" id="pendingCutiBadge">2 permohonan</span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>No. Rujukan</th><th>Nama Kakitangan</th><th>No. Staf</th><th>Jenis Cuti</th><th>Tarikh Mula</th><th>Tarikh Tamat</th><th>Hari</th><th>Sebab</th><th>Pengganti</th><th>Tindakan</th></tr></thead>
+          <tbody id="pendingCutiTbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-history"></i> Rekod Keputusan Terdahulu</div></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>No. Rujukan</th><th>Nama</th><th>Jenis Cuti</th><th>Tarikh</th><th>Hari</th><th>Status</th><th>Catatan</th><th>Surat</th></tr></thead>
+          <tbody id="histCutiTbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── LULUS E-IZIN (ADMIN) ─────────────────────── -->
+  <section class="section" id="sec-lulus-eizin">
+    <div class="ph"><h1><i class="fas fa-user-check" style="color:var(--gold-dk);margin-right:10px"></i>Luluskan Keluar (E-Izin)</h1><p>Semak dan luluskan permohonan E-Izin keluar pejabat kakitangan.</p></div>
+
+    <div class="card mb-6">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-clock"></i> Permohonan E-Izin Menunggu Kelulusan</div>
+        <span class="badge b-warning" id="pendingEizinBadge">2 permohonan</span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>No. Rujukan</th><th>Nama Kakitangan</th><th>No. Staf</th><th>Tarikh</th><th>Masa Keluar</th><th>Masa Balik</th><th>Jenis Urusan</th><th>Destinasi</th><th>Tindakan</th></tr></thead>
+          <tbody id="pendingEizinTbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-history"></i> Rekod Keputusan E-Izin Terdahulu</div></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>No. Rujukan</th><th>Nama</th><th>Tarikh</th><th>Masa Keluar</th><th>Destinasi</th><th>Status</th><th>Catatan</th></tr></thead>
+          <tbody id="histEizinTbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── LULUSKAN TEMPAHAN (ADMIN) ─────────────────────── -->
+  <section class="section" id="sec-lulus-tempahan">
+    <div class="ph"><h1><i class="fas fa-calendar-check" style="color:var(--gold-dk);margin-right:10px"></i>Luluskan Permohonan Tempahan</h1><p>Semak dan ambil tindakan ke atas permohonan tempahan bilik/kemudahan daripada kakitangan.</p></div>
+
+    <div class="card mb-6">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-clock"></i> Menunggu Kelulusan</div>
+        <span class="badge b-warning" id="pendingTempahanBadge">0 permohonan</span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>No. Rujukan</th>
+              <th>Nama Kakitangan</th>
+              <th>No. Staf</th>
+              <th>Ruang</th>
+              <th>Tarikh</th>
+              <th>Masa</th>
+              <th>Tujuan</th>
+              <th>Peserta</th>
+              <th>Tindakan</th>
+            </tr>
+          </thead>
+          <tbody id="pendingTempahanTbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-history"></i> Rekod Keputusan Terdahulu</div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>No. Rujukan</th>
+              <th>Nama</th>
+              <th>Ruang</th>
+              <th>Tarikh</th>
+              <th>Masa</th>
+              <th>Status</th>
+              <th>Catatan</th>
+              <th>Surat</th>
+            </tr>
+          </thead>
+          <tbody id="histTempahanTbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── DAFTAR PENGGUNA (ADMIN) ─────────────────────── -->
+  <section class="section" id="sec-daftar-pengguna">
+    <div class="ph"><h1><i class="fas fa-user-plus" style="color:var(--gold-dk);margin-right:10px"></i>Daftar Pengguna Sistem</h1><p>Daftarkan akaun pengguna baharu. Pengguna akan melengkapkan profil mereka selepas log masuk.</p></div>
+
+    <div class="card mb-6">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-file-alt"></i> Borang Pendaftaran Akaun Baharu</div></div>
+      <div class="card-body">
+        <div class="alert al-info mb-4">
+          <i class="fas fa-info-circle"></i>
+          <div>Isikan maklumat asas sahaja. Pengguna akan <strong>melengkapkan profil penuh mereka</strong> selepas log masuk ke sistem melalui menu <em>Profil Saya</em>.</div>
+        </div>
+        <form onsubmit="submitDaftarPengguna(event)" id="formDaftarPengguna">
+          <div class="form-row mb-4">
+            <div class="fg"><label>Nama Penuh (mengikut IC) <span style="color:var(--red)">*</span></label><input class="fc" id="dpNama" placeholder="cth: Ahmad Faris bin Hassan" required /></div>
+            <div class="fg"><label>No. Kad Pengenalan <span style="color:var(--red)">*</span></label><input class="fc" id="dpIC" placeholder="cth: 900101-01-1234" maxlength="14" required /></div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Nama Pengguna (Username) <span style="color:var(--red)">*</span></label><input class="fc" id="dpUsername" placeholder="cth: ahmadfarisIT" required /></div>
+            <div class="fg"><label>Peranan / Hak Capaian <span style="color:var(--red)">*</span></label>
+              <select class="fc" id="dpPeranan" required>
+                <option value="">— Pilih peranan —</option>
+                <option value="user">Pengguna Biasa</option>
+                <option value="admin">Pentadbir Sistem</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Kata Laluan Awal <span style="color:var(--red)">*</span></label><input class="fc" type="password" id="dpPassword" placeholder="Minimum 8 aksara" required minlength="8" /></div>
+            <div class="fg"><label>Sahkan Kata Laluan <span style="color:var(--red)">*</span></label><input class="fc" type="password" id="dpPasswordSahkan" placeholder="Ulang kata laluan" required /></div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-gold"><i class="fas fa-save"></i> Daftar Pengguna</button>
+            <button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Set Semula</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-users"></i> Senarai Pengguna Berdaftar</div>
+        <span class="badge b-info" id="penggunaBadge">1 pengguna</span>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Nama Penuh</th><th>No. IC</th><th>Username</th><th>Peranan</th><th>Status Profil</th><th>Status</th><th>Tindakan</th></tr>
+          </thead>
+          <tbody id="penggunaTbl"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── PROFIL SAYA ─────────────────────── -->
+  <section class="section" id="sec-profil">
+    <div class="ph"><h1><i class="fas fa-user-circle" style="color:var(--blue-lt);margin-right:10px"></i>Profil Saya</h1><p>Lengkapkan maklumat peribadi dan perjawatan anda dalam sistem portal SSMJ.</p></div>
+
+    <!-- Profile Card Header -->
+    <div class="card mb-6">
+      <div class="card-body" style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+        <!-- Avatar upload -->
+        <div style="text-align:center;flex-shrink:0">
+          <div id="profileAvatar" style="width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--navy2),var(--blue-lt));display:flex;align-items:center;justify-content:center;color:white;font-size:34px;font-weight:800;margin:0 auto 10px;overflow:hidden;border:3px solid var(--border)">
+            <span id="profileAvatarText">?</span>
+          </div>
+          <label for="avatarInput" class="btn btn-outline btn-sm" style="cursor:pointer;display:inline-flex">
+            <i class="fas fa-camera"></i> Tukar Gambar
+          </label>
+          <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)" />
+          <div style="font-size:10.5px;color:var(--muted);margin-top:6px">JPG, PNG (Maks. 2MB)</div>
+        </div>
+        <!-- Basic info preview -->
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:20px;font-weight:800;color:var(--text)" id="pvNama">—</div>
+          <div style="font-size:13px;color:var(--muted);margin:4px 0" id="pvJawatan">—</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+            <span class="badge b-info" id="pvJabatan"><i class="fas fa-building"></i> —</span>
+            <span class="badge b-secondary" id="pvNoStaf"><i class="fas fa-id-badge"></i> —</span>
+          </div>
+        </div>
+        <!-- Completion indicator -->
+        <div style="text-align:center;flex-shrink:0">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.8px">Kelengkapan Profil</div>
+          <div style="position:relative;width:70px;height:70px;margin:0 auto">
+            <svg viewBox="0 0 36 36" style="transform:rotate(-90deg);width:70px;height:70px">
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e8ecf0" stroke-width="3"/>
+              <circle id="progressCircle" cx="18" cy="18" r="15.9" fill="none" stroke="var(--green)" stroke-width="3" stroke-dasharray="0 100" stroke-linecap="round"/>
             </svg>
-            <div id="sabah-map-markers"></div>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;font-weight:800;color:var(--text)" id="progressPct">0%</div>
           </div>
-          <ul id="district-map-list" class="mini-list district-map-list"></ul>
-        </article>
-      </section>
+        </div>
+      </div>
+    </div>
 
-      <section class="section container">
-        <article class="card public-kpi-card card-initiative">
-          <p class="eyebrow">Inisiatif Semasa</p>
-          <h3 id="dashboard-subtitle">Laporan Inisiatif Kementerian</h3>
-          <ul id="initiative-list" class="mini-list"></ul>
-        </article>
-      </section>
-    </main>
+    <div id="profilIncompleteAlert" class="alert al-warn mb-6">
+      <i class="fas fa-exclamation-triangle"></i>
+      <div><strong>Profil anda belum lengkap!</strong> Sila isikan maklumat di bawah dan klik <em>Simpan Profil</em> untuk melengkapkan rekod anda dalam sistem.</div>
+    </div>
 
-    <script src="script.js?v=20260819h"></script>
-  </body>
+    <div class="card">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-edit"></i> Lengkapkan Maklumat Profil</div></div>
+      <div class="card-body">
+        <form onsubmit="simpanProfil(event)" id="formProfil">
+
+          <!-- Maklumat Peribadi -->
+          <div style="margin-bottom:22px">
+            <div style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue-lt);margin-bottom:14px;padding-bottom:7px;border-bottom:2px solid var(--border);">
+              <i class="fas fa-user"></i> &nbsp;A. Maklumat Peribadi
+            </div>
+            <div class="form-row mb-4">
+              <div class="fg"><label>Nama Penuh (mengikut IC) <span style="color:var(--red)">*</span></label><input class="fc" id="ppNama" placeholder="Nama penuh" required /></div>
+              <div class="fg"><label>No. Kad Pengenalan <span style="color:var(--red)">*</span></label><input class="fc" id="ppIC" placeholder="cth: 900101-01-1234" maxlength="14" required /></div>
+            </div>
+            <div class="form-row mb-4">
+              <div class="fg"><label>Jantina <span style="color:var(--red)">*</span></label>
+                <select class="fc" id="ppJantina" required onchange="kiraProgress()">
+                  <option value="">— Pilih —</option><option>Lelaki</option><option>Perempuan</option>
+                </select>
+              </div>
+              <div class="fg"><label>Tarikh Lahir <span style="color:var(--red)">*</span></label><input class="fc" type="date" id="ppTarikhLahir" required /></div>
+            </div>
+            <div class="form-row mb-4">
+              <div class="fg"><label>Bangsa <span style="color:var(--red)">*</span></label>
+                <select class="fc" id="ppBangsa" required onchange="kiraProgress()">
+                  <option value="">— Pilih —</option><option>Melayu</option><option>Cina</option><option>India</option><option>Lain-lain</option>
+                </select>
+              </div>
+              <div class="fg"><label>Agama</label>
+                <select class="fc" id="ppAgama" onchange="kiraProgress()">
+                  <option value="">— Pilih —</option><option>Islam</option><option>Kristian</option><option>Buddha</option><option>Hindu</option><option>Lain-lain</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row mb-4">
+              <div class="fg"><label>No. Telefon Bimbit <span style="color:var(--red)">*</span></label><input class="fc" id="ppTelBimbit" placeholder="cth: 012-3456789" required oninput="kiraProgress()" /></div>
+              <div class="fg"><label>Alamat E-mel Peribadi <span style="color:var(--red)">*</span></label><input class="fc" type="email" id="ppEmailPeribadi" placeholder="nama@gmail.com" required oninput="kiraProgress()" /></div>
+            </div>
+            <div class="form-row cols-1 mb-4">
+              <div class="fg"><label>Alamat Tetap <span style="color:var(--red)">*</span></label>
+                <textarea class="fc" id="ppAlamat" placeholder="No. rumah, jalan, taman, poskod, negeri..." rows="2" required oninput="kiraProgress()"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Maklumat Perjawatan -->
+          <div style="margin-bottom:22px">
+            <div style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue-lt);margin-bottom:14px;padding-bottom:7px;border-bottom:2px solid var(--border);">
+              <i class="fas fa-briefcase"></i> &nbsp;B. Maklumat Perjawatan
+            </div>
+            <div class="form-row mb-4">
+              <div class="fg"><label>No. Pekerja / No. Staf <span style="color:var(--red)">*</span></label><input class="fc" id="ppNoStaf" placeholder="cth: SSM006" required oninput="kiraProgress()" /></div>
+              <div class="fg"><label>Jawatan / Gred <span style="color:var(--red)">*</span></label><input class="fc" id="ppJawatan" placeholder="cth: Pegawai Tadbir N41" required oninput="kiraProgress()" /></div>
+            </div>
+            <div class="form-row mb-4">
+              <div class="fg"><label>Jabatan / Bahagian <span style="color:var(--red)">*</span></label>
+                <select class="fc" id="ppJabatan" required onchange="kiraProgress()">
+                  <option value="">— Pilih jabatan —</option>
+                  <option>IT & Komunikasi</option><option>Kewangan</option><option>Sumber Manusia</option>
+                  <option>Pentadbiran</option><option>Perkhidmatan Am</option><option>Operasi</option><option>Undang-Undang</option>
+                </select>
+              </div>
+              <div class="fg"><label>Tarikh Mula Berkhidmat</label><input class="fc" type="date" id="ppTarikhMula" /></div>
+            </div>
+            <div class="form-row mb-4">
+              <div class="fg"><label>Jenis Perlantikan</label>
+                <select class="fc" id="ppJenisPelantikan">
+                  <option value="">— Pilih —</option><option>Tetap</option><option>Kontrak</option><option>Sementara</option><option>Sambilan</option>
+                </select>
+              </div>
+              <div class="fg"><label>Alamat E-mel Pejabat</label><input class="fc" type="email" id="ppEmailPejabat" placeholder="nama@ssmj.gov.my" /></div>
+            </div>
+            <div class="form-row mb-4">
+              <div class="fg"><label>No. Telefon Pejabat</label><input class="fc" id="ppTelPejabat" placeholder="07-XXXXXXX" /></div>
+              <div class="fg"><label>Penyelia Langsung</label><input class="fc" id="ppPenyelia" placeholder="Nama penyelia" /></div>
+            </div>
+          </div>
+
+          <!-- Keselamatan Akaun -->
+          <div style="margin-bottom:22px">
+            <div style="font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--blue-lt);margin-bottom:14px;padding-bottom:7px;border-bottom:2px solid var(--border);">
+              <i class="fas fa-lock"></i> &nbsp;C. Tukar Kata Laluan (Pilihan)
+            </div>
+            <div class="form-row mb-4">
+              <div class="fg"><label>Kata Laluan Baharu</label><input class="fc" type="password" id="ppPassword" placeholder="Kosongkan jika tidak mahu tukar" minlength="8" /></div>
+              <div class="fg"><label>Sahkan Kata Laluan Baharu</label><input class="fc" type="password" id="ppPasswordSahkan" placeholder="Ulang kata laluan baharu" /></div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Profil</button>
+            <button type="button" class="btn btn-secondary" onclick="muatProfil()"><i class="fas fa-undo"></i> Batal Perubahan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────── NOTIS & PENGUMUMAN (ADMIN) ─────────────────────── -->
+  <section class="section" id="sec-notis">
+    <div class="ph"><h1><i class="fas fa-bullhorn" style="color:var(--gold-dk);margin-right:10px"></i>Notis &amp; Pengumuman</h1><p>Hantarkan notis atau pengumuman kepada semua pengguna sistem. Notis akan muncul dalam peti masuk masing-masing.</p></div>
+
+    <!-- Borang hantar notis -->
+    <div class="card mb-6">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-paper-plane"></i> Hantar Notis / Pengumuman Baharu</div></div>
+      <div class="card-body">
+        <form onsubmit="submitNotis(event)" id="formNotis">
+          <div class="form-row mb-4">
+            <div class="fg"><label>Tajuk Notis <span style="color:var(--red)">*</span></label>
+              <input class="fc" id="notisTajuk" placeholder="cth: Mesyuarat Jabatan pada 15 April 2026" required />
+            </div>
+            <div class="fg"><label>Jenis Notis</label>
+              <select class="fc" id="notisJenis">
+                <option value="Pengumuman">📢 Pengumuman Umum</option>
+                <option value="Peringatan">⏰ Peringatan</option>
+                <option value="Kecemasan">🚨 Notis Kecemasan</option>
+                <option value="Mesyuarat">📅 Notis Mesyuarat</option>
+                <option value="Cuti Am">🎉 Cuti Am / Kelepasan</option>
+                <option value="Sistem">⚙️ Pemberitahuan Sistem</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row cols-1 mb-4">
+            <div class="fg"><label>Kandungan Notis <span style="color:var(--red)">*</span></label>
+              <textarea class="fc" id="notisKandungan" rows="5" placeholder="Tulis kandungan notis atau pengumuman anda di sini..." required></textarea>
+            </div>
+          </div>
+          <!-- Image upload -->
+          <div class="form-row cols-1 mb-4">
+            <div class="fg">
+              <label>Lampiran Gambar (Pilihan)</label>
+              <div id="notisImgDrop" style="border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer;background:var(--bg);transition:border-color .2s" onclick="document.getElementById('notisImgInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--blue)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="handleNotisDrop(event)">
+                <div id="notisImgPreviewWrap" style="display:none;margin-bottom:12px">
+                  <img id="notisImgPreview" src="" alt="Preview" style="max-width:100%;max-height:220px;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.12)" />
+                </div>
+                <div id="notisImgPlaceholder">
+                  <i class="fas fa-image" style="font-size:32px;color:var(--muted);margin-bottom:8px;display:block"></i>
+                  <div style="font-size:13px;color:var(--muted)">Klik atau seret gambar ke sini</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:4px">JPG, PNG, GIF (Maks. 5MB)</div>
+                </div>
+              </div>
+              <input type="file" id="notisImgInput" accept="image/*" style="display:none" onchange="handleNotisImg(this)" />
+              <button type="button" class="btn btn-outline btn-sm mt-2" id="notisImgClear" style="display:none" onclick="clearNotisImg()">
+                <i class="fas fa-times"></i> Buang Gambar
+              </button>
+            </div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label>Hantar Kepada</label>
+              <select class="fc" id="notisKepada">
+                <option value="all">Semua Pengguna</option>
+                <option value="user">Pengguna Biasa Sahaja</option>
+                <option value="admin">Pentadbir Sahaja</option>
+              </select>
+            </div>
+            <div class="fg"><label>Keutamaan</label>
+              <select class="fc" id="notisKeutamaan">
+                <option value="normal">Biasa</option>
+                <option value="tinggi">Tinggi</option>
+                <option value="kritikal">Kritikal</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button type="submit" class="btn btn-gold"><i class="fas fa-paper-plane"></i> Hantar Notis</button>
+            <button type="reset" class="btn btn-secondary" onclick="clearNotisImg()"><i class="fas fa-undo"></i> Set Semula</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Rekod notis yang telah dihantar -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-history"></i> Rekod Notis Dihantar</div>
+        <span class="badge b-info" id="notisBadge">0 notis</span>
+      </div>
+      <div id="notisLogList" style="padding:8px 0">
+        <div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">
+          <i class="fas fa-inbox" style="font-size:28px;display:block;margin-bottom:10px;opacity:.4"></i>
+          Belum ada notis dihantar.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────── URUS PILIHAN SISTEM (Admin) ─────────────── -->
+  <section class="section" id="sec-urus-pilihan">
+    <div class="ph"><h1><i class="fas fa-sliders-h" style="color:var(--gold-dk);margin-right:10px"></i>Urus Pilihan Sistem</h1><p>Tetapkan senarai pilihan untuk borang Tempahan, Mohon Cuti, dan E-Izin Keluar yang digunakan oleh semua pengguna.</p></div>
+
+    <!-- Ruang Tempahan -->
+    <div class="card mb-6">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-door-open"></i> Senarai Ruang / Kemudahan Tempahan</div>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:10px;margin-bottom:16px">
+          <input class="fc" id="inpTambahRuang" placeholder="Nama ruang baharu, cth: Bilik Latihan C" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();tambahRuang()}" />
+          <button class="btn btn-primary" onclick="tambahRuang()"><i class="fas fa-plus"></i> Tambah</button>
+        </div>
+        <div id="ursPilRuangList"></div>
+      </div>
+    </div>
+
+    <!-- Jenis Cuti -->
+    <div class="card mb-6">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-umbrella-beach"></i> Senarai Jenis Cuti</div>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:10px;margin-bottom:16px">
+          <input class="fc" id="inpTambahCuti" placeholder="Jenis cuti baharu, cth: Cuti Khas" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();tambahJenisCuti()}" />
+          <button class="btn btn-primary" onclick="tambahJenisCuti()"><i class="fas fa-plus"></i> Tambah</button>
+        </div>
+        <div id="ursPilCutiList"></div>
+      </div>
+    </div>
+
+    <!-- Jenis E-Izin -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-ttl"><i class="fas fa-walking"></i> Senarai Jenis Urusan (E-Izin Keluar)</div>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:10px;margin-bottom:16px">
+          <input class="fc" id="inpTambahEizin" placeholder="Jenis urusan baharu, cth: Urusan Pentadbiran" style="flex:1" onkeydown="if(event.key==='Enter'){event.preventDefault();tambahJenisEizin()}" />
+          <button class="btn btn-primary" onclick="tambahJenisEizin()"><i class="fas fa-plus"></i> Tambah</button>
+        </div>
+        <div id="ursPilEizinList"></div>
+      </div>
+    </div>
+  </section>
+
+
+<main>
+
+<script src="dashboard.js"></script>
+
+<!-- Daftar Service Worker PWA -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('[SW] Berjaya didaftar:', reg.scope))
+        .catch(err => console.warn('[SW] Gagal daftar:', err));
+    });
+  }
+</script>
+</body>
 </html>
+

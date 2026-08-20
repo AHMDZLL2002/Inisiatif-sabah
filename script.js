@@ -62,6 +62,25 @@ const storageKeys = {
   gallery: 'bea-ministry-gallery'
 };
 
+const firebaseConfig = {
+  apiKey: 'AIzaSyB0Z3N0n7mR19hhTBGPoLkOotW7eTFgs_A',
+  authDomain: 'inisiatif-sabah.firebaseapp.com',
+  projectId: 'inisiatif-sabah',
+  storageBucket: 'inisiatif-sabah.firebasestorage.app',
+  messagingSenderId: '565943558519',
+  appId: '1:565943558519:web:5d4cb81b09a71c66d54172',
+  measurementId: 'G-LGMZND09DS'
+};
+
+const isFirebaseConfigured = () => Object.values(firebaseConfig).every((value) => value && !String(value).startsWith('YOUR_'));
+
+let firebaseAuth = null;
+
+if (typeof window !== 'undefined' && window.firebase && isFirebaseConfigured()) {
+  window.firebase.initializeApp(firebaseConfig);
+  firebaseAuth = window.firebase.auth();
+}
+
 const ALLOWED_GALLERY_IMAGE_HOSTS = [
   'images.unsplash.com',
   'unsplash.com',
@@ -626,6 +645,8 @@ const getDepartmentCodeFromTitle = (title) => {
   return match ? match[0] : '';
 };
 
+const AUTH_SESSION_TTL_MS = 8 * 60 * 60 * 1000;
+
 const getAuthSession = () => {
   const authData = window.localStorage.getItem(storageKeys.auth);
 
@@ -634,7 +655,19 @@ const getAuthSession = () => {
   }
 
   try {
-    return JSON.parse(authData);
+    const session = JSON.parse(authData);
+    if (!session || !session.department || !session.loggedInAt) {
+      window.localStorage.removeItem(storageKeys.auth);
+      return null;
+    }
+
+    const elapsed = Date.now() - new Date(session.loggedInAt).getTime();
+    if (elapsed > AUTH_SESSION_TTL_MS) {
+      window.localStorage.removeItem(storageKeys.auth);
+      return null;
+    }
+
+    return session;
   } catch (error) {
     window.localStorage.removeItem(storageKeys.auth);
     return null;
@@ -653,7 +686,15 @@ const setAuthSession = (department, username = '', role = '', ministry = '') => 
 
 const normalizePassword = (password) => password.trim().toUpperCase();
 
-const clearAuthSession = () => {
+const clearAuthSession = async () => {
+  if (firebaseAuth && typeof firebaseAuth.signOut === 'function') {
+    try {
+      await firebaseAuth.signOut();
+    } catch (error) {
+      console.warn('Firebase sign-out failed:', error);
+    }
+  }
+
   window.localStorage.removeItem(storageKeys.auth);
 };
 
@@ -1032,6 +1073,9 @@ const renderHomepageGallery = () => {
     const imageElement = document.createElement('img');
     imageElement.src = image;
     imageElement.alt = `Inisiatif ${title}`;
+    imageElement.addEventListener('error', () => {
+      imageElement.src = 'assets/LOGO%20SMJ.jpg';
+    }, { once: true });
 
     const content = document.createElement('div');
     content.className = 'gallery-content';
@@ -1068,6 +1112,13 @@ const loginForm = document.getElementById('login-form');
 const departmentSelect = document.getElementById('department-select');
 const usernameInput = document.getElementById('username-input');
 const loginFeedback = document.getElementById('login-feedback');
+const forgotPasswordLink = document.getElementById('forgot-password-link');
+const forgotPasswordForm = document.getElementById('forgot-password-form');
+const forgotEmailInput = document.getElementById('forgot-email-input');
+const forgotDepartmentSelect = document.getElementById('forgot-department-select');
+const forgotAccountSummary = document.getElementById('forgot-account-summary');
+const forgotPasswordFeedback = document.getElementById('forgot-password-feedback');
+const resendVerificationButton = document.getElementById('resend-verification-button');
 const dashboardSession = document.getElementById('dashboard-session');
 const officerInfo = document.getElementById('officer-info');
 const reportForm = document.getElementById('report-form');
@@ -1114,6 +1165,7 @@ const ministryDashboardGrid = document.getElementById('ministry-dashboard-grid')
 const ssmjKpiPending = document.getElementById('ssmj-kpi-pending');
 const ssmjKpiRejected = document.getElementById('ssmj-kpi-rejected');
 const ssmjKpiFocus = document.getElementById('ssmj-kpi-focus');
+const ssmjKpiInitiatives = document.getElementById('ssmj-kpi-initiatives');
 const publicAdminLink = document.getElementById('public-admin-link');
 const pieChartCanvas = document.getElementById('pie-chart-canvas');
 const pieChartLabel = document.getElementById('pie-chart-label');
@@ -1170,11 +1222,26 @@ const isSsmjAdminRole = (role) => {
   const normalized = (role || '').trim().toLowerCase();
   return normalized === 'admin ssmj' || normalized === 'ssmj' || normalized === 'admin';
 };
+const isGeneralUserRole = (role) => {
+  const normalized = (role || '').trim().toLowerCase();
+  return !normalized || normalized === 'user' || normalized === 'focal person' || normalized === 'pegawai' || normalized === 'staff';
+};
 const canAccessSsmjAdminFeatures = (session) => Boolean(
   session &&
   isSsmjDepartment(session.department) &&
   (isSsmjAdminRole(session.role) || !session.role)
 );
+const canAccessDepartmentDashboard = (session, department) => {
+  if (!session || !session.department || !departmentPasswords[session.department]) {
+    return false;
+  }
+
+  if (department === SSMJ_ADMIN_DEPARTMENT) {
+    return canAccessSsmjAdminFeatures(session);
+  }
+
+  return session.department === department && (isGeneralUserRole(session.role) || isSsmjAdminRole(session.role) || !session.role);
+};
 
 const departmentMonograms = {
   ssmj: 'SMJ',
@@ -1486,9 +1553,13 @@ const renderPendingFollowups = () => {
 const renderSsmjDashboardKpis = () => {
   const pendingUpdates = getStoredPendingUpdates();
   const followups = getStoredPendingFollowups();
+  const reports = getStoredReports();
 
   const pendingEntries = Object.entries(pendingUpdates).filter(([department]) => isPublicDashboardDepartment(department));
   const followupEntries = Object.entries(followups).filter(([department]) => isPublicDashboardDepartment(department));
+  const initiativeCount = Object.entries(reports)
+    .filter(([department]) => isPublicDashboardDepartment(department))
+    .reduce((total, [, report]) => total + (Array.isArray(report.initiatives) ? report.initiatives.length : 0), 0);
 
   if (ssmjKpiPending) {
     ssmjKpiPending.textContent = `${pendingEntries.length}`;
@@ -1502,6 +1573,10 @@ const renderSsmjDashboardKpis = () => {
     ssmjKpiFocus.textContent = pendingEntries.length
       ? getDepartmentTitle(pendingEntries[0][0])
       : 'Tiada permohonan menunggu semakan';
+  }
+
+  if (ssmjKpiInitiatives) {
+    ssmjKpiInitiatives.textContent = `${initiativeCount}`;
   }
 
   renderPendingFollowups();
@@ -1854,6 +1929,15 @@ if (document.body.dataset.page === 'dashboard-admin') {
   if (!session) {
     window.location.href = 'login.html';
   } else {
+    const requestedDepartment = getDepartmentFromQuery() || session.department;
+    const departmentAllowed = canAccessDepartmentDashboard(session, requestedDepartment || session.department);
+
+    if (!departmentAllowed) {
+      clearAuthSession();
+      window.location.href = 'login.html';
+      return;
+    }
+
     initializeAdminSidebarToggle();
     const reports = getStoredReports();
     currentSession = session;
@@ -2065,49 +2149,49 @@ if (document.body.classList.contains('index-page')) {
   renderHomepageGallery();
 }
 
-if (loginForm && departmentSelect && usernameInput) {
+if (loginForm && departmentSelect && document.getElementById('email-input') && document.getElementById('password-input')) {
   const preferredDepartment = getDepartmentFromQuery();
+  const emailInput = document.getElementById('email-input');
+
   if (isValidDepartment(preferredDepartment)) {
     departmentSelect.value = preferredDepartment;
   }
 
-  loginForm.addEventListener('submit', (event) => {
+  const updateForgotPasswordLink = () => {
+    if (!forgotPasswordLink) {
+      return;
+    }
+
+    const params = new URLSearchParams();
+    const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+    if (email) {
+      params.set('email', email);
+    }
+    if (isValidDepartment(departmentSelect.value)) {
+      params.set('dept', departmentSelect.value);
+    }
+    forgotPasswordLink.href = `forgot-password.html${params.toString() ? `?${params.toString()}` : ''}`;
+  };
+
+  if (emailInput) {
+    emailInput.addEventListener('input', updateForgotPasswordLink);
+  }
+  departmentSelect.addEventListener('change', updateForgotPasswordLink);
+  updateForgotPasswordLink();
+
+  loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const username = usernameInput.value.trim();
+
+    const emailInput = document.getElementById('email-input');
+    const passwordInput = document.getElementById('password-input');
+    const email = (emailInput ? emailInput.value.trim() : '').toLowerCase();
     const department = departmentSelect.value;
-    const passwordRaw = document.getElementById('password-input').value.trim();
+    const passwordRaw = passwordInput ? passwordInput.value.trim() : '';
     const password = normalizePassword(passwordRaw);
 
-    if (!username || !department || !passwordRaw) {
+    if (!email || !department || !passwordRaw || !isValidDepartment(department)) {
       if (loginFeedback) {
-        loginFeedback.textContent = 'Username, kementerian dan kata laluan wajib diisi.';
-      }
-      return;
-    }
-
-    const users = getStoredUsers();
-    const departmentTitle = getDepartmentTitle(department);
-    const matchedUser = users.find((user) => {
-      const sameUsername = (user.username || '').trim().toLowerCase() === username.toLowerCase();
-      const samePassword = normalizePassword(user.password || '') === password;
-      const userMinistryCode = user.ministryCode || getDepartmentCodeFromTitle(user.ministry || '');
-      const userMinistryTitle = (user.ministry || '').trim();
-      const sameMinistry = !userMinistryCode
-        ? (!userMinistryTitle || userMinistryTitle === departmentTitle)
-        : userMinistryCode === department;
-      return sameUsername && samePassword && sameMinistry;
-    });
-
-    if (users.length > 0 && !matchedUser) {
-      if (loginFeedback) {
-        loginFeedback.textContent = 'Pengesahan gagal. Sila semak username, kementerian dan kata laluan yang didaftarkan.';
-      }
-      return;
-    }
-
-    if (!matchedUser && (!departmentPasswords[department] || password !== normalizePassword(departmentPasswords[department]))) {
-      if (loginFeedback) {
-        loginFeedback.textContent = 'Pengesahan gagal. Gunakan kata laluan demo SMJ2026 untuk masuk.';
+        loginFeedback.textContent = 'Email, kementerian yang sah dan kata laluan wajib diisi.';
       }
       return;
     }
@@ -2116,19 +2200,211 @@ if (loginForm && departmentSelect && usernameInput) {
       loginFeedback.textContent = '';
     }
 
+    if (firebaseAuth && isFirebaseConfigured()) {
+      try {
+        const credential = await firebaseAuth.signInWithEmailAndPassword(email, passwordRaw);
+        const user = credential.user;
+
+        if (!user.emailVerified) {
+          await firebaseAuth.signOut();
+          if (loginFeedback) {
+            loginFeedback.textContent = 'Sila sahkan email Firebase anda sebelum log masuk.';
+          }
+          return;
+        }
+
+        const departmentTitle = getDepartmentTitle(department);
+        const authRole = department === SSMJ_ADMIN_DEPARTMENT ? 'Admin SSMJ' : 'User';
+
+        setAuthSession(
+          department,
+          user.displayName || user.email?.split('@')[0] || email.split('@')[0],
+          authRole,
+          departmentTitle
+        );
+
+        window.location.href = `admin-dashboard.html?dept=${department}`;
+        return;
+      } catch (error) {
+        if (loginFeedback) {
+          loginFeedback.textContent = 'Login Firebase gagal. Sila semak email dan kata laluan yang benar.';
+        }
+        console.warn('Firebase login failed:', error);
+        return;
+      }
+    }
+
+    const users = getStoredUsers();
+    const departmentTitle = getDepartmentTitle(department);
+    const matchedUser = users.find((user) => {
+      const cleanedUsername = (user.username || '').trim().toLowerCase();
+      const cleanedEmail = (user.email || '').trim().toLowerCase();
+      const sameIdentity = cleanedUsername === email || cleanedEmail === email;
+      const samePassword = normalizePassword(user.password || '') === password;
+      const userMinistryCode = user.ministryCode || getDepartmentCodeFromTitle(user.ministry || '');
+      const userMinistryTitle = (user.ministry || '').trim();
+      const sameMinistry = !userMinistryCode
+        ? (!userMinistryTitle || userMinistryTitle === departmentTitle)
+        : userMinistryCode === department;
+      const validRoleForDepartment = department === SSMJ_ADMIN_DEPARTMENT
+        ? isSsmjAdminRole(user.role)
+        : (isGeneralUserRole(user.role) || isSsmjAdminRole(user.role) || !user.role);
+
+      return sameIdentity && samePassword && sameMinistry && validRoleForDepartment;
+    });
+
+    if (users.length > 0 && !matchedUser) {
+      if (loginFeedback) {
+        loginFeedback.textContent = 'Pengesahan gagal. Sila semak email, kementerian dan kata laluan yang didaftarkan.';
+      }
+      return;
+    }
+
+    if (!matchedUser && (!departmentPasswords[department] || password !== normalizePassword(departmentPasswords[department]))) {
+      if (loginFeedback) {
+        loginFeedback.textContent = 'Pengesahan gagal. Pastikan anda menggunakan kata laluan yang sah untuk kementerian tersebut.';
+      }
+      return;
+    }
+
     const authRole = matchedUser
       ? (matchedUser.role || '')
-      : (department === SSMJ_ADMIN_DEPARTMENT ? 'Admin SSMJ' : '');
+      : (department === SSMJ_ADMIN_DEPARTMENT ? 'Admin SSMJ' : 'User');
+
+    if (department === SSMJ_ADMIN_DEPARTMENT && !isSsmjAdminRole(authRole)) {
+      if (loginFeedback) {
+        loginFeedback.textContent = 'Akses Admin SSMJ hanya dibenarkan untuk akaun berperanan admin.';
+      }
+      return;
+    }
 
     setAuthSession(
       department,
-      matchedUser ? (matchedUser.username || username) : username,
+      matchedUser ? (matchedUser.username || matchedUser.email || email.split('@')[0]) : email.split('@')[0],
       authRole,
       matchedUser
         ? (matchedUser.ministry || getDepartmentTitle(matchedUser.ministryCode || department))
         : departmentTitle
     );
     window.location.href = `admin-dashboard.html?dept=${department}`;
+  });
+}
+
+if (forgotPasswordForm && forgotEmailInput && forgotDepartmentSelect) {
+  const recoveryParams = new URLSearchParams(window.location.search);
+  const recoveryEmail = recoveryParams.get('email') || '';
+  const recoveryDepartment = recoveryParams.get('dept') || '';
+
+  if (recoveryEmail) {
+    forgotEmailInput.value = recoveryEmail;
+  }
+  if (isValidDepartment(recoveryDepartment)) {
+    forgotDepartmentSelect.value = recoveryDepartment;
+  }
+
+  const updateForgotAccountSummary = () => {
+    const email = forgotEmailInput.value.trim().toLowerCase();
+    const department = forgotDepartmentSelect.value;
+    const departmentTitle = department && isValidDepartment(department)
+      ? getDepartmentTitle(department)
+      : 'Kementerian belum dipilih';
+
+    if (forgotAccountSummary) {
+      forgotAccountSummary.textContent = email
+        ? `Email: ${email} | Kementerian: ${departmentTitle}`
+        : `Email belum diisi | Kementerian: ${departmentTitle}`;
+    }
+  };
+
+  forgotEmailInput.addEventListener('input', updateForgotAccountSummary);
+  forgotDepartmentSelect.addEventListener('change', updateForgotAccountSummary);
+  updateForgotAccountSummary();
+
+  forgotPasswordForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const email = forgotEmailInput.value.trim().toLowerCase();
+    const department = forgotDepartmentSelect.value;
+
+    if (!email || !isValidDepartment(department)) {
+      if (forgotPasswordFeedback) {
+        forgotPasswordFeedback.textContent = 'Alamat email dan kementerian yang sah wajib diisi.';
+      }
+      return;
+    }
+
+    if (!firebaseAuth || !isFirebaseConfigured()) {
+      if (forgotPasswordFeedback) {
+        forgotPasswordFeedback.textContent = 'Firebase Authentication belum tersedia. Sila hubungi pentadbir sistem.';
+      }
+      return;
+    }
+
+    const submitButton = forgotPasswordForm.querySelector('button[type="submit"]');
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email);
+      if (forgotPasswordFeedback) {
+        forgotPasswordFeedback.textContent = `Pautan reset telah dihantar ke ${email}. Semak Inbox atau folder Spam.`;
+      }
+    } catch (error) {
+      if (forgotPasswordFeedback) {
+        forgotPasswordFeedback.textContent = error.code === 'auth/user-not-found'
+          ? 'Email ini belum didaftarkan dalam Firebase Authentication.'
+          : 'Pautan reset tidak dapat dihantar. Sila semak email dan cuba lagi.';
+      }
+      console.warn('Firebase password reset failed:', error);
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+    }
+  });
+}
+
+if (resendVerificationButton) {
+  resendVerificationButton.addEventListener('click', async () => {
+    const emailInput = document.getElementById('email-input');
+    const passwordInput = document.getElementById('password-input');
+    const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+    const password = passwordInput ? passwordInput.value.trim() : '';
+
+    if (!email || !password) {
+      if (loginFeedback) {
+        loginFeedback.textContent = 'Masukkan email dan kata laluan untuk menghantar semula pengesahan email.';
+      }
+      return;
+    }
+
+    if (!firebaseAuth || !isFirebaseConfigured()) {
+      if (loginFeedback) {
+        loginFeedback.textContent = 'Pengesahan email Firebase belum tersedia dalam mod demo tempatan.';
+      }
+      return;
+    }
+
+    try {
+      const credential = await firebaseAuth.signInWithEmailAndPassword(email, password);
+      if (credential.user.emailVerified) {
+        if (loginFeedback) {
+          loginFeedback.textContent = 'Email anda telah pun disahkan. Anda boleh log masuk.';
+        }
+      } else {
+        await credential.user.sendEmailVerification();
+        if (loginFeedback) {
+          loginFeedback.textContent = 'Email pengesahan baharu telah dihantar.';
+        }
+      }
+      await firebaseAuth.signOut();
+    } catch (error) {
+      if (loginFeedback) {
+        loginFeedback.textContent = 'Email atau kata laluan tidak sah.';
+      }
+      console.warn('Firebase verification email failed:', error);
+    }
   });
 }
 
