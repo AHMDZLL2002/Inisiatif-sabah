@@ -3,7 +3,7 @@
    Versi cache dikemaskini bila app deploy baru
    ══════════════════════════════════════════════ */
 
-const CACHE_NAME = 'ssmj-portal-v3';
+const CACHE_NAME = 'ssmj-portal-v4';
 
 // Fail statik yang dicache untuk akses pantas
 const STATIC_ASSETS = [
@@ -11,7 +11,7 @@ const STATIC_ASSETS = [
   '/index.html',
   '/dashboard.html',
   '/dashboard.css',
-  '/dashboard.js?v=20260821-initiative',
+  '/dashboard.js?v=20260821-final3',
   '/manifest.json',
   '/assets/LOGO SMJ.jpg',
   '/assets/logo-footer.png',
