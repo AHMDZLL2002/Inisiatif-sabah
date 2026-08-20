@@ -37,24 +37,24 @@
     }
 
     .sb-logo {
-      flex: 0 0 142px;
-      padding: 14px 14px 12px;
+      flex: 0 0 124px;
+      padding: 9px 10px 8px;
       border-bottom: 1px solid rgba(255,255,255,.1);
       display: flex; flex-direction: column; align-items: center; gap: 9px;
       overflow: hidden;
     }
     .sb-brand-logos {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; height: 48px;
+      display: flex; align-items: center; justify-content: center; gap: 11px;
+      width: 100%; height: 52px;
     }
     .sb-footer-logo-wrap, .sb-smj-logo-wrap {
-      width: 102px; height: 46px; background: transparent;
+      width: 116px; height: 50px; background: transparent;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
-    .sb-smj-logo-wrap { width: 62px; }
+    .sb-smj-logo-wrap { width: 72px; }
     .sb-footer-logo, .sb-smj-logo {
-      width: 100%; height: 100%; object-fit: contain; padding: 2px;
+      width: 100%; height: 100%; object-fit: contain; padding: 1px;
       mix-blend-mode: normal;
       filter: none;
     }
