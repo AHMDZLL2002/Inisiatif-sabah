@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ms">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tambah Aktiviti Takwim | Blue Economic Agency</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" href="assets/LOGO%20SMJ.jpg" type="image/jpeg" />
+    <link rel="stylesheet" href="styles.css?v=20260819j" />
+  </head>
+  <body data-page="dashboard-admin-activity" class="dashboard-admin-page is-ssmj-admin">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-top">
+          <a href="admin-dashboard.html?dept=ssmj" class="admin-brand">
+            <span class="brand-mark" aria-hidden="true"><img src="assets/LOGO%20SMJ.jpg" alt="" class="brand-logo" /></span>
+            <span>Bahagian Pengurusan &amp; Inisiatif, Sekretariat Sabah Maju Jaya</span>
+          </a>
+
+          <nav class="admin-menu" aria-label="Navigasi admin">
+            <a class="admin-menu-link" href="admin-dashboard.html?dept=ssmj">Dashboard</a>
+            <a class="admin-menu-link is-active" href="admin-aktiviti.html">Tambah Aktiviti</a>
+            <a class="admin-menu-link" href="admin-semakan.html">Semakan &amp; Luluskan</a>
+            <a class="admin-menu-link" href="admin-pending.html">Pending</a>
+          </nav>
+        </div>
+
+        <div class="admin-sidebar-footer">
+          <a class="admin-menu-link admin-user-link" href="admin-pengguna.html">Pengguna</a>
+        </div>
+      </aside>
+
+      <button
+        type="button"
+        id="sidebar-toggle-button"
+        class="sidebar-toggle-handle"
+        aria-expanded="true"
+        aria-controls="admin-sidebar"
+        aria-label="Tutup panel sisi"
+        title="Tutup panel sisi"
+      >
+        <span aria-hidden="true">&lt;</span>
+      </button>
+
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <div class="admin-topbar-actions">
+            <p id="topbar-time" class="topbar-chip"></p>
+            <p id="topbar-user" class="topbar-chip"></p>
+            <a id="logout-link" class="topbar-chip topbar-button topbar-danger" href="login.html">Log Keluar</a>
+          </div>
+        </header>
+
+        <main class="admin-content activity-management-layout">
+          <div class="admin-layout activity-management-grid">
+            <article class="card admin-form-card">
+              <div class="section-heading admin-heading">
+                <p class="eyebrow">Tambah Aktiviti</p>
+                <h2>Cipta aktiviti takwim baharu</h2>
+              </div>
+
+              <form id="activity-form" class="login-form admin-form activity-form">
+                <label>
+                  Tajuk Aktiviti
+                  <input id="activity-title" type="text" placeholder="Contoh: Mesyuarat Bulanan SSMJ" required />
+                </label>
+
+                <div class="form-grid">
+                  <label>
+                    Tarikh
+                    <input id="activity-date" type="date" required />
+                  </label>
+                  <label>
+                    Masa
+                    <input id="activity-time" type="time" />
+                  </label>
+                </div>
+
+                <label>
+                  Sasaran Kementerian
+                  <select id="activity-department" required>
+                    <option value="" selected disabled>Pilih sasaran</option>
+                    <option value="all">Semua Kementerian</option>
+                    <option value="ssmj">Sekretariat Sabah Maju Jaya</option>
+                    <option value="kerja-raya">Kementerian Kerja Raya dan Utiliti</option>
+                    <option value="kewangan">Kementerian Kewangan</option>
+                    <option value="perindustrian">Kementerian Perindustrian, Keusahawanan dan Pengangkutan</option>
+                    <option value="tempatan">Kementerian Kerajaan Tempatan dan Perumahan</option>
+                    <option value="pertanian">Kementerian Pertanian, Perikanan dan Industri Makanan</option>
+                    <option value="luar-bandar">Kementerian Pembangunan Luar Bandar</option>
+                    <option value="pendidikan">Kementerian Pendidikan, Sains, Teknologi dan Inovasi</option>
+                    <option value="pelancongan">Kementerian Pelancongan, Kebudayaan dan Alam Sekitar</option>
+                    <option value="wanita">Kementerian Wanita, Kesihatan dan Kesejahteraan Rakyat</option>
+                    <option value="belia">Kementerian Pembangunan Belia, Kemajuan Sukan dan Ekonomi Kreatif</option>
+                  </select>
+                </label>
+
+                <label>
+                  Huraian Aktiviti
+                  <textarea id="activity-description" rows="4" placeholder="Masukkan maklumat tambahan, tempat atau nota penting"></textarea>
+                </label>
+
+                <label class="activity-alert-toggle">
+                  <input id="activity-alert-input" type="checkbox" checked />
+                  Jadikan aktiviti ini sebagai alert pada kalendar
+                </label>
+
+                <p id="activity-feedback" class="form-feedback form-feedback-dark" aria-live="polite"></p>
+
+                <button type="submit" class="btn btn-primary">Simpan Aktiviti</button>
+              </form>
+            </article>
+
+            <article class="card admin-form-card">
+              <div class="section-heading admin-heading">
+                <p class="eyebrow">Senarai Aktiviti</p>
+                <h2>Aktiviti Takwim Tersimpan</h2>
+              </div>
+              <div id="activity-management-list" class="pending-approvals-list"></div>
+            </article>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="script.js?v=20260819h"></script>
+  </body>
+</html>

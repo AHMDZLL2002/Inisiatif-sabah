@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ms">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Admin Kementerian | Blue Economic Agency</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="assets/LOGO%20SMJ.jpg" type="image/jpeg" />
+    <link rel="stylesheet" href="styles.css?v=20260819j" />
+  </head>
+  <body data-page="dashboard-admin" class="dashboard-admin-page">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-top">
+          <a href="index.html" class="admin-brand">
+            <span class="brand-mark" aria-hidden="true"><img src="assets/LOGO%20SMJ.jpg" alt="" class="brand-logo" /></span>
+            <span>Bahagian Pengurusan &amp; Inisiatif, Sekretariat Sabah Maju Jaya</span>
+          </a>
+
+          <nav class="admin-menu" aria-label="Navigasi admin">
+            <button type="button" class="admin-menu-link is-active" data-target="menu-dashboard">Dashboard</button>
+            <a class="admin-menu-link admin-activity-link" href="admin-aktiviti.html" hidden>Tambah Aktiviti</a>
+            <button type="button" class="admin-menu-link" data-target="menu-maklumat" hidden>Kemaskini Maklumat</button>
+            <button type="button" class="admin-menu-link" data-target="menu-status" hidden>Status</button>
+            <button type="button" class="admin-menu-link" data-target="menu-inisiatif" hidden>Kemaskini Inisiatif</button>
+            <button type="button" class="admin-menu-link" data-target="menu-galeri" hidden>Galeri Inisiatif</button>
+          </nav>
+
+          <section id="ssmj-feature-box" class="admin-feature-box" hidden>
+            <a class="admin-menu-link admin-feature-link" href="admin-semakan.html">Semakan &amp; Luluskan</a>
+            <a class="admin-menu-link admin-feature-link" href="admin-pending.html">Pending</a>
+          </section>
+        </div>
+
+        <div class="admin-sidebar-footer">
+          <a class="admin-menu-link admin-user-link" href="admin-pengguna.html" hidden>Pengguna</a>
+        </div>
+      </aside>
+
+      <button
+        type="button"
+        id="sidebar-toggle-button"
+        class="sidebar-toggle-handle"
+        aria-expanded="true"
+        aria-controls="admin-sidebar"
+        aria-label="Tutup panel sisi"
+        title="Tutup panel sisi"
+      >
+        <span aria-hidden="true">&lt;</span>
+      </button>
+
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <div class="admin-topbar-actions">
+            <p id="topbar-time" class="topbar-chip"></p>
+            <p id="topbar-user" class="topbar-chip"></p>
+            <button type="button" id="user-settings-button" class="topbar-chip topbar-button" hidden>Setting Pengguna</button>
+            <a id="logout-link" class="topbar-chip topbar-button topbar-danger" href="login.html">Log Keluar</a>
+          </div>
+
+          <form id="user-settings-form" class="user-settings-form" hidden>
+            <label>
+              Nama Pengguna
+              <input id="user-settings-name" type="text" placeholder="Masukkan nama pengguna" />
+            </label>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+          </form>
+        </header>
+
+        <main class="admin-content">
+          <section id="menu-dashboard" class="admin-section-panel is-active">
+            <p id="dashboard-summary" class="dashboard-summary dashboard-summary-dark"></p>
+            <p id="pending-notice" class="dashboard-copy pending-notice" aria-live="polite"></p>
+
+            <article class="card dashboard-card admin-summary-card">
+              <p class="eyebrow">Laporan Ringkasan</p>
+              <h3 id="summary-title">Ringkasan Inisiatif</h3>
+              <p id="summary-text" class="dashboard-copy"></p>
+              <ul id="summary-points" class="mini-list summary-points"></ul>
+            </article>
+
+            <div id="ssmj-kpi-grid" class="ssmj-kpi-grid" hidden>
+              <article class="card dashboard-card ssmj-kpi-card">
+                <p class="eyebrow">Jumlah Pending Kelulusan</p>
+                <p id="ssmj-kpi-pending" class="dashboard-metric">0</p>
+                <p class="dashboard-copy">Permohonan menunggu tindakan semakan dan kelulusan.</p>
+              </article>
+
+              <article class="card dashboard-card ssmj-kpi-card">
+                <p class="eyebrow">Pending Kemaskini Jabatan</p>
+                <p id="ssmj-kpi-rejected" class="dashboard-metric">0</p>
+                <p class="dashboard-copy">Permohonan ditolak dan menunggu kemaskini semula jabatan.</p>
+              </article>
+
+              <article class="card dashboard-card ssmj-kpi-card">
+                <p class="eyebrow">Permohonan Fokus Semasa</p>
+                <p id="ssmj-kpi-focus" class="dashboard-copy">Tiada</p>
+                <p class="dashboard-copy">Kementerian teratas untuk disemak seterusnya.</p>
+              </article>
+            </div>
+
+            <div id="ministry-dashboard-grid" class="dashboard-grid">
+              <article class="card dashboard-card">
+                <p class="eyebrow">Kemas Kini Terkini</p>
+                <h3 id="dashboard-subtitle">Laporan Kemajuan</h3>
+                <div class="progress-track">
+                  <div id="progress-bar" class="progress-fill"></div>
+                </div>
+                <p id="progress-text" class="dashboard-metric"></p>
+              </article>
+
+              <article class="card dashboard-card">
+                <p class="eyebrow">Status</p>
+                <h3 id="status-pill" class="pill"></h3>
+                <p id="status-text" class="dashboard-copy"></p>
+              </article>
+
+              <article class="card dashboard-card">
+                <p class="eyebrow">Inisiatif Semasa</p>
+                <ul id="initiative-list" class="mini-list"></ul>
+              </article>
+
+              <article class="card dashboard-card">
+                <p class="eyebrow">Maklumat Kemas Kini</p>
+                <p id="updated-info" class="dashboard-copy"></p>
+                <p id="officer-info" class="dashboard-copy"></p>
+              </article>
+            </div>
+
+            <article class="card dashboard-card calendar-card">
+              <div class="section-heading admin-heading">
+                <p class="eyebrow">Takwim Aktiviti</p>
+                <h3 id="activity-calendar-title">Takwim Aktiviti</h3>
+              </div>
+              <p id="activity-alert" class="calendar-alert"></p>
+              <div class="activity-calendar-shell">
+                <div id="activity-calendar-grid" class="activity-calendar-grid" aria-label="Kalendar aktiviti"></div>
+                <div>
+                  <p class="calendar-subtitle">Aktiviti Terdekat</p>
+                  <ul id="activity-upcoming-list" class="mini-list activity-upcoming-list"></ul>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section id="menu-maklumat" class="admin-section-panel" hidden>
+            <article class="card admin-form-card">
+              <div class="section-heading admin-heading">
+                <p class="eyebrow">Kemaskini Maklumat</p>
+                <h2>Perbaharui ringkasan dan maklumat pegawai</h2>
+              </div>
+
+              <form id="report-form" class="login-form admin-form">
+                <label>
+                  Nama Pegawai
+                  <input id="officer-name" type="text" placeholder="Contoh: Ahmad Salleh" required />
+                </label>
+
+                <label>
+                  Ringkasan Terkini
+                  <textarea id="summary-input" rows="3" placeholder="Ringkasan perkembangan terkini kementerian" required></textarea>
+                </label>
+
+                <p id="report-feedback" class="form-feedback form-feedback-dark" aria-live="polite"></p>
+
+                <button type="submit" class="btn btn-primary">Simpan kemas kini maklumat</button>
+              </form>
+            </article>
+          </section>
+
+          <section id="menu-status" class="admin-section-panel" hidden>
+            <article class="card admin-form-card">
+              <div class="section-heading admin-heading">
+                <p class="eyebrow">Status</p>
+                <h2>Kemaskini status dan kemajuan semasa</h2>
+              </div>
+
+              <form id="status-form" class="login-form admin-form">
+                <label>
+                  Status Laporan
+                  <select id="status-select" required>
+                    <option value="Dalam pelaksanaan">Dalam pelaksanaan</option>
+                    <option value="Sedia untuk pelancaran">Sedia untuk pelancaran</option>
+                    <option value="Berjaya disiapkan">Berjaya disiapkan</option>
+                  </select>
+                </label>
+
+                <label>
+                  Peratus Kemajuan
+                  <input id="progress-input" type="number" min="0" max="100" required />
+                </label>
+
+                <p id="status-feedback" class="form-feedback form-feedback-dark" aria-live="polite"></p>
+
+                <button type="submit" class="btn btn-primary">Simpan status projek</button>
+              </form>
+            </article>
+          </section>
+
+          <section id="menu-inisiatif" class="admin-section-panel" hidden>
+            <div class="admin-layout">
+              <article class="card admin-form-card">
+                <div class="section-heading admin-heading">
+                  <p class="eyebrow">Kemaskini Inisiatif</p>
+                  <h2>Kemaskini fokus inisiatif kementerian</h2>
+                </div>
+
+                <form id="initiative-form" class="login-form admin-form">
+                  <label>
+                    Inisiatif / Laporan Baharu
+                    <textarea id="initiative-input" rows="3" placeholder="Nyatakan kemas kini laporan atau inisiatif baharu" required></textarea>
+                  </label>
+
+                  <p id="initiative-feedback" class="form-feedback form-feedback-dark" aria-live="polite"></p>
+
+                  <button type="submit" class="btn btn-primary">Simpan kemaskini inisiatif</button>
+                </form>
+              </article>
+
+              <article class="card admin-info-card">
+                <p class="eyebrow">Akses Disahkan</p>
+                <h3 id="admin-ministry-title">Pegawai kementerian</h3>
+                <p class="dashboard-copy">Paparan ini hanya dibuka selepas pengesahan kementerian yang sah. Semua kemas kini disimpan pada pelayar semasa sebagai sesi demo.</p>
+                <ul class="mini-list admin-notes">
+                  <li>Gunakan menu kiri untuk pindah antara modul pengurusan.</li>
+                  <li>Tekan setting pengguna untuk ubah nama pengguna yang dipaparkan di topbar.</li>
+                  <li>Klik log keluar untuk tamatkan sesi pegawai.</li>
+                </ul>
+              </article>
+            </div>
+          </section>
+
+          <section id="menu-galeri" class="admin-section-panel" hidden>
+            <article class="card admin-form-card">
+              <div class="section-heading admin-heading">
+                <p class="eyebrow">Galeri Inisiatif</p>
+                <h2>Kemaskini ringkasan dan gambar kementerian</h2>
+              </div>
+
+              <form id="gallery-form" class="login-form admin-form">
+                <label>
+                  Ringkasan Inisiatif
+                  <textarea id="gallery-summary-input" rows="4" placeholder="Nyatakan ringkasan terkini untuk dipaparkan di halaman utama" required></textarea>
+                </label>
+
+                <label>
+                  Pautan Gambar Inisiatif
+                  <input id="gallery-image-input" type="url" placeholder="https://contoh.com/gambar.jpg" />
+                </label>
+
+                <label>
+                  Atau Upload Gambar (Telefon)
+                  <input id="gallery-image-file" type="file" accept="image/*" capture="environment" />
+                </label>
+                <p class="gallery-upload-note">Boleh terus ambil gambar dari kamera telefon atau pilih dari galeri.</p>
+
+                <figure class="gallery-preview-card" aria-live="polite">
+                  <img id="gallery-preview-image" src="" alt="Pratonton gambar inisiatif" hidden />
+                  <figcaption id="gallery-preview-state" class="gallery-preview-state">Masukkan URL gambar sah untuk pratonton.</figcaption>
+                </figure>
+
+                <p id="gallery-feedback" class="form-feedback form-feedback-dark" aria-live="polite"></p>
+
+                <button type="submit" class="btn btn-primary">Simpan Galeri Inisiatif</button>
+              </form>
+            </article>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="script.js?v=20260819h"></script>
+  </body>
+</html>

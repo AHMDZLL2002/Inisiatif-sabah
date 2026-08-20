@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ms">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Kementerian | Blue Economic Agency</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="assets/LOGO%20SMJ.jpg" type="image/jpeg" />
+    <link rel="stylesheet" href="styles.css?v=20260819j" />
+  </head>
+  <body data-page="dashboard" class="public-dashboard-page">
+    <header class="hero public-dashboard-hero">
+      <nav class="navbar container">
+        <a href="index.html" class="brand">
+          <span class="brand-mark" aria-hidden="true"><img src="assets/LOGO%20SMJ.jpg" alt="" class="brand-logo" /></span>
+          <span>Bahagian Pengurusan &amp; Inisiatif, Sekretariat Sabah Maju Jaya</span>
+        </a>
+        <div class="nav-links">
+          <a class="nav-link" href="index.html">Halaman Utama</a>
+          <a id="public-admin-link" class="nav-link nav-link-cta" href="login.html">Log Masuk Admin</a>
+        </div>
+      </nav>
+
+      <div class="container public-hero-content">
+        <p class="eyebrow">Dashboard Laporan Kementerian</p>
+        <h1 id="dashboard-title">Memuatkan laporan...</h1>
+        <p id="dashboard-summary" class="dashboard-summary"></p>
+        <p id="dashboard-session" class="dashboard-session"></p>
+        <div class="public-hero-meta" aria-label="Ringkasan pantas kementerian">
+          <p class="hero-meta-chip">
+            Kementerian Aktif
+            <span id="hero-department-chip">Memuatkan...</span>
+          </p>
+          <p class="hero-meta-chip">
+            Kemajuan Semasa
+            <span id="hero-progress-chip">--%</span>
+          </p>
+          <p class="hero-meta-chip">
+            Status Program
+            <span id="hero-status-chip">Memuatkan...</span>
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <main class="public-dashboard-main">
+      <section class="section container public-kpi-grid public-kpi-bento">
+        <article class="card public-kpi-card card-status">
+          <p class="eyebrow">Status Semasa</p>
+          <h3 id="status-pill" class="pill"></h3>
+          <p id="status-text" class="dashboard-copy"></p>
+          <p id="updated-info" class="dashboard-copy"></p>
+          <p id="officer-info" class="dashboard-copy"></p>
+        </article>
+
+        <article class="card public-kpi-card card-summary">
+          <p class="eyebrow">Laporan Ringkasan</p>
+          <h3 id="summary-title">Ringkasan Inisiatif</h3>
+          <p id="summary-text" class="dashboard-copy"></p>
+          <ul id="summary-points" class="mini-list summary-points"></ul>
+        </article>
+
+        <article class="card public-kpi-card card-pie">
+          <p class="eyebrow">Peratus Pelaksanaan Inisiatif</p>
+          <div class="public-chart-wrap">
+            <canvas id="pie-chart-canvas" width="280" height="220" aria-label="Carta pai pelaksanaan"></canvas>
+          </div>
+          <p id="pie-chart-label" class="dashboard-copy"></p>
+        </article>
+
+        <article class="card public-kpi-card card-progress">
+          <p class="eyebrow">Peratus Pencapaian Program</p>
+          <div class="public-chart-wrap">
+            <canvas id="progress-chart-canvas" width="480" height="240" aria-label="Graf pelaksanaan program"></canvas>
+          </div>
+          <p id="progress-text" class="dashboard-metric"></p>
+        </article>
+      </section>
+
+      <section class="section container">
+        <article class="card public-kpi-card calendar-card">
+          <div class="section-heading public-section-heading">
+            <p class="eyebrow">Takwim Aktiviti</p>
+            <h2 id="activity-calendar-title">Takwim Aktiviti</h2>
+          </div>
+          <p id="activity-alert" class="calendar-alert"></p>
+          <div class="activity-calendar-shell">
+            <div id="activity-calendar-grid" class="activity-calendar-grid" aria-label="Kalendar aktiviti"></div>
+            <div>
+              <p class="calendar-subtitle">Aktiviti Terdekat</p>
+              <ul id="activity-upcoming-list" class="mini-list activity-upcoming-list"></ul>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section container public-analytics-grid">
+        <article class="card public-kpi-card card-district">
+          <p class="eyebrow">Graf Peratusan Pelaksanaan Program</p>
+          <div class="public-chart-wrap">
+            <canvas id="district-chart-canvas" width="480" height="260" aria-label="Graf daerah Sabah"></canvas>
+          </div>
+        </article>
+
+        <article class="card public-kpi-card card-map">
+          <p class="eyebrow">Peta Pelaksanaan Program Sabah</p>
+          <div class="sabah-map" id="sabah-map">
+            <svg viewBox="0 0 600 360" role="img" aria-label="Peta ringkas Sabah">
+              <path d="M72 197L99 136L155 100L230 92L280 62L352 79L418 124L491 156L548 212L518 274L438 309L347 319L283 295L234 316L168 292L119 262L96 224Z" class="sabah-shape"></path>
+            </svg>
+            <div id="sabah-map-markers"></div>
+          </div>
+          <ul id="district-map-list" class="mini-list district-map-list"></ul>
+        </article>
+      </section>
+
+      <section class="section container">
+        <article class="card public-kpi-card card-initiative">
+          <p class="eyebrow">Inisiatif Semasa</p>
+          <h3 id="dashboard-subtitle">Laporan Inisiatif Kementerian</h3>
+          <ul id="initiative-list" class="mini-list"></ul>
+        </article>
+      </section>
+    </main>
+
+    <script src="script.js?v=20260819h"></script>
+  </body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ms">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pengurusan Pengguna | Blue Economic Agency</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" href="assets/LOGO%20SMJ.jpg" type="image/jpeg" />
+    <link rel="stylesheet" href="styles.css?v=20260819j" />
+  </head>
+  <body data-page="dashboard-admin-users" class="dashboard-admin-page is-ssmj-admin">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-top">
+          <a href="admin-dashboard.html?dept=ssmj" class="admin-brand">
+            <span class="brand-mark" aria-hidden="true"><img src="assets/LOGO%20SMJ.jpg" alt="" class="brand-logo" /></span>
+            <span>Bahagian Pengurusan &amp; Inisiatif, Sekretariat Sabah Maju Jaya</span>
+          </a>
+
+          <nav class="admin-menu" aria-label="Navigasi admin">
+            <a class="admin-menu-link" href="admin-dashboard.html?dept=ssmj">Dashboard</a>
+            <a class="admin-menu-link admin-activity-link" href="admin-aktiviti.html">Tambah Aktiviti</a>
+            <a class="admin-menu-link" href="admin-semakan.html">Semakan &amp; Luluskan</a>
+            <a class="admin-menu-link" href="admin-pending.html">Pending</a>
+          </nav>
+        </div>
+
+        <div class="admin-sidebar-footer">
+          <a class="admin-menu-link admin-user-link is-active" href="admin-pengguna.html">Pengguna</a>
+        </div>
+      </aside>
+
+      <button
+        type="button"
+        id="sidebar-toggle-button"
+        class="sidebar-toggle-handle"
+        aria-expanded="true"
+        aria-controls="admin-sidebar"
+        aria-label="Tutup panel sisi"
+        title="Tutup panel sisi"
+      >
+        <span aria-hidden="true">&lt;</span>
+      </button>
+
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <div class="admin-topbar-actions">
+            <p id="topbar-time" class="topbar-chip"></p>
+            <p id="topbar-user" class="topbar-chip"></p>
+            <a id="logout-link" class="topbar-chip topbar-button topbar-danger" href="login.html">Log Keluar</a>
+          </div>
+        </header>
+
+        <main class="admin-content admin-users-content">
+          <article class="card admin-form-card admin-users-create-card">
+            <div class="section-heading admin-heading">
+              <p class="eyebrow">Daftar Pengguna</p>
+              <h2>Maklumat Akaun Baharu</h2>
+            </div>
+
+            <form id="admin-users-form" class="admin-form admin-users-form">
+              <div class="form-grid">
+                <label>
+                  Username
+                  <input id="admin-user-username" type="text" required placeholder="contoh: admin.kewangan" />
+                </label>
+                <label>
+                  Password
+                  <input id="admin-user-password" type="password" required placeholder="Masukkan password" />
+                </label>
+              </div>
+
+              <label>
+                Role Pengguna
+                <select id="admin-user-role" required>
+                  <option value="" selected disabled>Pilih peranan pengguna</option>
+                  <option value="Admin SSMJ">Admin SSMJ</option>
+                  <option value="Focal Person">Focal Person</option>
+                </select>
+              </label>
+
+              <label>
+                Kementerian
+                <select id="admin-user-ministry" required>
+                  <option value="" selected disabled>Pilih kementerian</option>
+                  <option value="ssmj">Sekretariat Sabah Maju Jaya</option>
+                  <option value="kerja-raya">Kementerian Kerja Raya dan Utiliti</option>
+                  <option value="kewangan">Kementerian Kewangan</option>
+                  <option value="perindustrian">Kementerian Perindustrian, Keusahawanan dan Pengangkutan</option>
+                  <option value="tempatan">Kementerian Kerajaan Tempatan dan Perumahan</option>
+                  <option value="pertanian">Kementerian Pertanian, Perikanan dan Industri Makanan</option>
+                  <option value="luar-bandar">Kementerian Pembangunan Luar Bandar</option>
+                  <option value="pendidikan">Kementerian Pendidikan, Sains, Teknologi dan Inovasi</option>
+                  <option value="pelancongan">Kementerian Pelancongan, Kebudayaan dan Alam Sekitar</option>
+                  <option value="wanita">Kementerian Wanita, Kesihatan dan Kesejahteraan Rakyat</option>
+                  <option value="belia">Kementerian Pembangunan Belia, Kemajuan Sukan dan Ekonomi Kreatif</option>
+                </select>
+              </label>
+
+              <button type="submit" class="btn btn-primary">Cipta Pengguna</button>
+              <p id="admin-users-feedback" class="form-feedback form-feedback-dark" aria-live="polite"></p>
+            </form>
+          </article>
+
+          <article class="card admin-form-card admin-users-list-card">
+            <div class="section-heading admin-heading">
+              <p class="eyebrow">Senarai Pengguna</p>
+              <h2>Pengguna Berdaftar</h2>
+            </div>
+            <div id="admin-users-list" class="pending-approvals-list"></div>
+          </article>
+        </main>
+      </div>
+    </div>
+
+    <script src="script.js?v=20260819h"></script>
+  </body>
+</html>
