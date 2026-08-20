@@ -75,10 +75,12 @@ const firebaseConfig = {
 const isFirebaseConfigured = () => Object.values(firebaseConfig).every((value) => value && !String(value).startsWith('YOUR_'));
 
 let firebaseAuth = null;
+let firebaseRegistrationAuth = null;
 
 if (typeof window !== 'undefined' && window.firebase && isFirebaseConfigured()) {
   window.firebase.initializeApp(firebaseConfig);
   firebaseAuth = window.firebase.auth();
+  firebaseRegistrationAuth = window.firebase.initializeApp(firebaseConfig, 'admin-user-registration').auth();
 }
 
 const ALLOWED_GALLERY_IMAGE_HOSTS = [
@@ -2710,7 +2712,7 @@ if (featureLinks.length) {
 }
 
 if (adminUsersForm) {
-  adminUsersForm.addEventListener('submit', (event) => {
+  adminUsersForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const session = requireDashboardAccess();
@@ -2726,8 +2728,26 @@ if (adminUsersForm) {
     const ministry = getDepartmentTitle(ministryCode);
 
     if (!username || !password || !role || !ministryCode) {
-      saveSectionFeedback(adminUsersFeedback, 'Username, password, role pengguna dan kementerian wajib diisi.');
+      saveSectionFeedback(adminUsersFeedback, 'Email, password, role pengguna dan kementerian wajib diisi.');
       return;
+    }
+
+    if (firebaseRegistrationAuth && password.length < 6) {
+      saveSectionFeedback(adminUsersFeedback, 'Password Firebase mestilah sekurang-kurangnya 6 aksara.');
+      return;
+    }
+
+    if (firebaseRegistrationAuth) {
+      try {
+        await firebaseRegistrationAuth.createUserWithEmailAndPassword(username.toLowerCase(), password);
+        await firebaseRegistrationAuth.signOut();
+      } catch (error) {
+        const message = error.code === 'auth/email-already-in-use'
+          ? 'Email ini sudah wujud dalam Firebase Authentication.'
+          : 'Akaun Firebase tidak dapat dicipta. Sila semak email dan password.';
+        saveSectionFeedback(adminUsersFeedback, message);
+        return;
+      }
     }
 
     const users = getStoredUsers();
