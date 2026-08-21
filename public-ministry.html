@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laporan Kementerian | Pengurusan Inisiatif</title>
+  <link rel="stylesheet" href="styles.css?v=20260821-public-ministry" />
+  <link rel="icon" href="assets/LOGO%20SMJ.jpg" type="image/jpeg" />
+</head>
+<body>
+  <header class="hero dashboard-hero">
+    <nav class="navbar container">
+      <a href="index.html" class="brand"><span class="brand-mark" aria-hidden="true"><img src="assets/LOGO%20SMJ.jpg" alt="" class="brand-logo" /></span><span>Bahagian Pengurusan &amp; Inisiatif, Sekretariat Sabah Maju Jaya</span></a>
+      <div class="nav-links"><a class="nav-link" href="index.html">Halaman Utama</a><a class="nav-link" href="login.html">Log Masuk</a></div>
+    </nav>
+    <div class="container dashboard-hero-content">
+      <p class="eyebrow">Laporan Kementerian</p>
+      <h1 id="ministry-title">Laporan Pelaksanaan Inisiatif</h1>
+      <p id="ministry-summary" class="dashboard-summary">Ringkasan pelaksanaan inisiatif kementerian.</p>
+    </div>
+  </header>
+  <main class="section container" style="padding-top:32px">
+    <div class="dashboard-grid">
+      <article class="card dashboard-card"><p class="eyebrow">Jumlah Inisiatif</p><p id="report-count" class="dashboard-metric">0</p><p class="dashboard-copy">Inisiatif yang telah dilaporkan.</p></article>
+      <article class="card dashboard-card"><p class="eyebrow">Kemajuan Keseluruhan</p><p id="report-progress" class="dashboard-metric">0%</p><p class="dashboard-copy">Purata kemajuan laporan kementerian.</p></article>
+      <article class="card dashboard-card"><p class="eyebrow">Status Paparan</p><p id="report-status" class="dashboard-copy">Menunggu laporan diluluskan.</p></article>
+    </div>
+    <section class="card dashboard-card"><div class="section-heading admin-heading"><p class="eyebrow">Senarai Inisiatif</p><h2>Pelaksanaan Inisiatif Kementerian</h2></div><div id="ministry-reports"><p class="dashboard-copy">Belum ada laporan inisiatif yang diluluskan untuk paparan awam.</p></div></section>
+  </main>
+  <script>
+    const data={
+      'kerja-raya':['Kementerian Kerja Raya dan Utiliti','Fokus kepada naik taraf infrastruktur pesisir, utiliti mampan, dan laluan logistik strategik.'],
+      kewangan:['Kementerian Kewangan','Menerajui pembiayaan projek biru melalui belanjawan strategik dan insentif hijau.'],
+      perindustrian:['Kementerian Perindustrian, Keusahawanan dan Pengangkutan','Memperkukuh rantaian industri marin dan pengangkutan yang lebih cekap.'],
+      tempatan:['Kementerian Kerajaan Tempatan dan Perumahan','Menambah baik perancangan bandar pesisir dan perumahan komuniti.'],
+      pertanian:['Kementerian Pertanian, Perikanan dan Industri Makanan','Memodenkan sektor perikanan dan amalan pengeluaran yang lestari.'],
+      'luar-bandar':['Kementerian Pembangunan Luar Bandar','Memperluas kapasiti ekonomi komuniti luar bandar dan akses pasaran.'],
+      pendidikan:['Kementerian Pendidikan, Sains, Teknologi dan Inovasi','Mengarusperdanakan penyelidikan, pendidikan dan inovasi teknologi.'],
+      pelancongan:['Kementerian Pelancongan, Kebudayaan dan Alam Sekitar','Menyelaras pelancongan pesisir dan pemuliharaan alam sekitar.'],
+      wanita:['Kementerian Wanita, Kesihatan dan Kesejahteraan Rakyat','Memperkasa kesihatan komuniti, perlindungan sosial dan inklusiviti.'],
+      belia:['Kementerian Pembangunan Belia, Kemajuan Sukan dan Ekonomi Kreatif','Mengaktifkan potensi belia melalui sukan dan ekonomi kreatif.']
+    };
+    const dept=new URLSearchParams(location.search).get('dept')||'kerja-raya';
+    const info=data[dept]||data['kerja-raya']; document.getElementById('ministry-title').textContent=info[0]; document.getElementById('ministry-summary').textContent=info[1];
+    let reports=[]; try{reports=JSON.parse(localStorage.getItem('ssmj-initiative-reports')||'[]')}catch(_){reports=[]}
+    const visible=reports.filter(r=>r.department===dept&&r.reviewStatus==='Diluluskan'); document.getElementById('report-count').textContent=visible.length; document.getElementById('report-progress').textContent=visible.length?`${Math.round(visible.reduce((n,r)=>n+Number(r.progress||0),0)/visible.length)}%`:'0%';
+    if(visible.length){document.getElementById('report-status').textContent='Laporan diluluskan SSMJ';document.getElementById('ministry-reports').innerHTML=visible.map(r=>`<article class="pending-item"><h3>${r.title}</h3><p class="dashboard-copy"><strong>Status:</strong> ${r.status} | <strong>Kemajuan:</strong> ${r.progress}%</p><p class="dashboard-copy">${r.summary}</p><p class="pending-meta"><strong>Sasaran:</strong> ${r.target||'-'} | <strong>Tindakan seterusnya:</strong> ${r.nextAction||'-'}</p></article>`).join('')}
+  </script>
+</body>
+</html>

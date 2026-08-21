@@ -1930,6 +1930,7 @@ function submitInitiativeReport(event) {
   const report = {
     id: `initiative-${Date.now()}`,
     username: typeof CU !== 'undefined' && CU.username ? CU.username : 'pengguna',
+    department: (typeof CU !== 'undefined' && (CU.department || CU.dept)) || 'kerja-raya',
     title: document.getElementById('initiativeTitle').value.trim(),
     type: document.getElementById('initiativeType').value,
     status: document.getElementById('initiativeStatus').value,

@@ -1582,6 +1582,60 @@ const renderSsmjDashboardKpis = () => {
   }
 
   renderPendingFollowups();
+  renderSsmjInitiativeInbox();
+};
+
+const renderSsmjInitiativeInbox = () => {
+  const list = document.getElementById('ssmj-initiative-inbox-list');
+  if (!list) return;
+  let reports = [];
+  try {
+    reports = JSON.parse(window.localStorage.getItem('ssmj-initiative-reports') || '[]');
+  } catch (error) {
+    reports = [];
+  }
+  const pending = reports.filter((report) => report.reviewStatus === 'Menunggu Semakan SSMJ');
+  if (!pending.length) {
+    list.innerHTML = '<p class="dashboard-copy">Tiada laporan baharu menunggu semakan.</p>';
+    return;
+  }
+  list.innerHTML = '';
+  pending.forEach((report) => {
+    const item = document.createElement('article');
+    item.className = 'pending-item';
+    const title = document.createElement('h3');
+    title.textContent = report.title || 'Inisiatif tanpa nama';
+    const detail = document.createElement('p');
+    detail.className = 'dashboard-copy';
+    detail.textContent = `${report.username || 'Pengguna'} | ${report.status || '-'} | Kemajuan ${report.progress || 0}%`;
+    const summary = document.createElement('p');
+    summary.className = 'dashboard-copy';
+    summary.textContent = report.summary || '-';
+    const actions = document.createElement('div');
+    actions.className = 'pending-actions';
+    const approve = document.createElement('button');
+    approve.className = 'btn btn-primary';
+    approve.type = 'button';
+    approve.textContent = 'Luluskan';
+    approve.addEventListener('click', () => updateInitiativeReview(report.id, 'Diluluskan'));
+    const reject = document.createElement('button');
+    reject.className = 'btn btn-ghost';
+    reject.type = 'button';
+    reject.textContent = 'Tolak';
+    reject.addEventListener('click', () => updateInitiativeReview(report.id, 'Ditolak'));
+    actions.append(approve, reject);
+    item.append(title, detail, summary, actions);
+    list.appendChild(item);
+  });
+};
+
+const updateInitiativeReview = (id, reviewStatus) => {
+  let reports = [];
+  try { reports = JSON.parse(window.localStorage.getItem('ssmj-initiative-reports') || '[]'); } catch (error) { reports = []; }
+  reports = reports.map((report) => report.id === id ? { ...report, reviewStatus, reviewedAt: new Date().toISOString() } : report);
+  window.localStorage.setItem('ssmj-initiative-reports', JSON.stringify(reports));
+  renderSsmjInitiativeInbox();
+  renderSsmjDashboardKpis();
 };
 
 const renderSsmjSummary = () => {
