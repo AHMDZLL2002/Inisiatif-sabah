@@ -76,10 +76,12 @@ const isFirebaseConfigured = () => Object.values(firebaseConfig).every((value) =
 
 let firebaseAuth = null;
 let firebaseRegistrationAuth = null;
+let firebaseDb = null;
 
 if (typeof window !== 'undefined' && window.firebase && isFirebaseConfigured()) {
   window.firebase.initializeApp(firebaseConfig);
   firebaseAuth = window.firebase.auth();
+  firebaseDb = window.firebase.firestore();
   firebaseRegistrationAuth = window.firebase.initializeApp(firebaseConfig, 'admin-user-registration').auth();
 }
 
@@ -1585,7 +1587,7 @@ const renderSsmjDashboardKpis = () => {
   renderSsmjInitiativeInbox();
 };
 
-const renderSsmjInitiativeInbox = () => {
+const renderSsmjInitiativeInbox = async () => {
   const list = document.getElementById('ssmj-initiative-inbox-list');
   if (!list) return;
   let reports = [];
@@ -1593,6 +1595,12 @@ const renderSsmjInitiativeInbox = () => {
     reports = JSON.parse(window.localStorage.getItem('ssmj-initiative-reports') || '[]');
   } catch (error) {
     reports = [];
+  }
+  if (firebaseDb) {
+    try {
+      const snapshot = await firebaseDb.collection('reports').get();
+      reports = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    } catch (error) { console.warn('Firestore admin inbox unavailable:', error); }
   }
   const pending = reports.filter((report) => report.reviewStatus === 'Menunggu Semakan SSMJ');
   if (!pending.length) {
@@ -1629,11 +1637,15 @@ const renderSsmjInitiativeInbox = () => {
   });
 };
 
-const updateInitiativeReview = (id, reviewStatus) => {
+const updateInitiativeReview = async (id, reviewStatus) => {
   let reports = [];
   try { reports = JSON.parse(window.localStorage.getItem('ssmj-initiative-reports') || '[]'); } catch (error) { reports = []; }
   reports = reports.map((report) => report.id === id ? { ...report, reviewStatus, reviewedAt: new Date().toISOString() } : report);
   window.localStorage.setItem('ssmj-initiative-reports', JSON.stringify(reports));
+  if (firebaseDb) {
+    try { await firebaseDb.collection('reports').doc(id).set({ reviewStatus, reviewedAt: new Date().toISOString() }, { merge: true }); }
+    catch (error) { console.warn('Firestore review update failed:', error); }
+  }
   renderSsmjInitiativeInbox();
   renderSsmjDashboardKpis();
 };
@@ -2793,7 +2805,17 @@ if (adminUsersForm) {
 
     if (firebaseRegistrationAuth) {
       try {
-        await firebaseRegistrationAuth.createUserWithEmailAndPassword(username.toLowerCase(), password);
+        const created = await firebaseRegistrationAuth.createUserWithEmailAndPassword(username.toLowerCase(), password);
+        if (firebaseDb && created.user) {
+          await firebaseDb.collection('users').doc(created.user.uid).set({
+            uid: created.user.uid,
+            email: username.toLowerCase(),
+            role: role === 'Admin SSMJ' ? 'admin' : 'user',
+            ministryCode,
+            ministry,
+            createdAt: new Date().toISOString()
+          });
+        }
         await firebaseRegistrationAuth.signOut();
       } catch (error) {
         const message = error.code === 'auth/email-already-in-use'

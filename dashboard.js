@@ -1,5 +1,9 @@
 ﻿'use strict';
 
+const initiativeFirebaseConfig = { apiKey: 'AIzaSyB0Z3N0n7mR19hhTBGPoLkOotW7eTFgs_A', authDomain: 'inisiatif-sabah.firebaseapp.com', projectId: 'inisiatif-sabah', storageBucket: 'inisiatif-sabah.firebasestorage.app', messagingSenderId: '565943558519', appId: '1:565943558519:web:5d4cb81b09a71c66d54172' };
+if (window.firebase && !window.firebase.apps.length) window.firebase.initializeApp(initiativeFirebaseConfig);
+const initiativeDb = window.firebase ? window.firebase.firestore() : null;
+
 const USE_LEGACY_API = false;
 
 // -- Auth check
@@ -1908,11 +1912,17 @@ function getInitiativeReports() {
   }
 }
 
-function renderInitiativeReports() {
+async function renderInitiativeReports() {
   const list = document.getElementById('initiativeReportList');
   if (!list) return;
   const username = typeof CU !== 'undefined' && CU.username ? CU.username : 'pengguna';
-  const reports = getInitiativeReports().filter(report => report.username === username);
+  let reports = getInitiativeReports().filter(report => report.username === username);
+  if (initiativeDb) {
+    try {
+      const snapshot = await initiativeDb.collection('reports').where('username', '==', username).get();
+      reports = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) { console.warn('Firestore reports unavailable:', error); }
+  }
   if (!reports.length) {
     list.innerHTML = '<p class="empty-state">Belum ada laporan dihantar.</p>';
     return;
@@ -1925,7 +1935,7 @@ function renderInitiativeReports() {
     </div>`).join('');
 }
 
-function submitInitiativeReport(event) {
+async function submitInitiativeReport(event) {
   event.preventDefault();
   const report = {
     id: `initiative-${Date.now()}`,
@@ -1947,6 +1957,10 @@ function submitInitiativeReport(event) {
   const reports = getInitiativeReports();
   reports.unshift(report);
   localStorage.setItem(INITIATIVE_REPORTS_KEY, JSON.stringify(reports));
+  if (initiativeDb) {
+    try { await initiativeDb.collection('reports').doc(report.id).set(report); }
+    catch (error) { console.warn('Firestore report save failed:', error); }
+  }
   document.getElementById('initiativeReportForm').reset();
   renderInitiativeReports();
   const feedback = document.getElementById('initiativeReportFeedback');
