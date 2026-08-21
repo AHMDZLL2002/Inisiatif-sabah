@@ -44,15 +44,17 @@
       overflow: hidden;
     }
     .sb-brand-logos {
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      width: 248px; max-width: 100%; height: 66px;
+      display: grid; grid-template-columns: 1fr 1fr; align-items: center;
+      justify-items: center; gap: 6px;
+      width: 240px; max-width: 100%; height: 66px;
     }
     .sb-footer-logo-wrap, .sb-smj-logo-wrap {
-      width: 148px; height: 64px; background: transparent;
+      width: 116px; height: 64px; background: transparent;
+      flex: 0 0 116px;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
-    .sb-smj-logo-wrap { width: 96px; }
+    .sb-smj-logo-wrap { width: 116px; flex-basis: 116px; }
     .sb-footer-logo, .sb-smj-logo {
       width: 100%; height: 100%; object-fit: contain; padding: 1px;
       mix-blend-mode: normal;
