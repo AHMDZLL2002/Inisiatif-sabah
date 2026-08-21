@@ -359,6 +359,30 @@
 
   <section class="section" id="sec-inisiatif">
     <div class="ph"><h1><i class="fas fa-lightbulb" style="color:var(--gold);margin-right:10px"></i>Pengurusan Inisiatif</h1><p>Urus dan kemas kini maklumat inisiatif kementerian anda.</p></div>
+    <div class="card mb-6">
+      <div class="card-hdr"><div class="card-ttl"><i class="fas fa-file-circle-plus"></i> Maklumat Pelaksanaan Inisiatif</div></div>
+      <div class="card-body">
+        <form id="initiativeReportForm" onsubmit="submitInitiativeReport(event)">
+          <div class="form-row mb-4">
+            <div class="fg"><label for="initiativeTitle">Nama Inisiatif <span style="color:var(--red)">*</span></label><input class="fc" id="initiativeTitle" required placeholder="Contoh: Pemulihan Ekosistem Pesisir" /></div>
+            <div class="fg"><label for="initiativeType">Jenis Pengisian</label><select class="fc" id="initiativeType"><option value="Baharu">Inisiatif Baharu</option><option value="Kemaskini Pelaksanaan">Kemaskini Pelaksanaan</option><option value="Laporan Berkala">Laporan Berkala</option></select></div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label for="initiativeStatus">Status Pelaksanaan <span style="color:var(--red)">*</span></label><select class="fc" id="initiativeStatus" required><option value="Perancangan">Perancangan</option><option value="Dalam Pelaksanaan">Dalam Pelaksanaan</option><option value="Selesai">Selesai</option><option value="Tertangguh">Tertangguh</option></select></div>
+            <div class="fg"><label for="initiativeProgress">Kemajuan Pelaksanaan (%) <span style="color:var(--red)">*</span></label><input class="fc" id="initiativeProgress" type="number" min="0" max="100" value="0" required /></div>
+          </div>
+          <div class="form-row mb-4">
+            <div class="fg"><label for="initiativeTarget">Sasaran / Output</label><input class="fc" id="initiativeTarget" placeholder="Sasaran dan hasil yang ingin dicapai" /></div>
+            <div class="fg"><label for="initiativeOfficer">Pegawai Penyelaras</label><input class="fc" id="initiativeOfficer" placeholder="Nama pegawai penyelaras" /></div>
+          </div>
+          <div class="fg mb-4"><label for="initiativeSummary">Ringkasan Pelaksanaan <span style="color:var(--red)">*</span></label><textarea class="fc" id="initiativeSummary" rows="4" required placeholder="Terangkan perkembangan, pencapaian dan hasil semasa inisiatif."></textarea></div>
+          <div class="form-row mb-4"><div class="fg"><label for="initiativeChallenges">Cabaran / Isu</label><textarea class="fc" id="initiativeChallenges" rows="3" placeholder="Nyatakan cabaran atau isu yang memerlukan tindakan."></textarea></div><div class="fg"><label for="initiativeNextAction">Tindakan Seterusnya</label><textarea class="fc" id="initiativeNextAction" rows="3" placeholder="Nyatakan tindakan susulan dan tempoh pelaksanaan."></textarea></div></div>
+          <button type="submit" class="btn btn-blue"><i class="fas fa-paper-plane"></i> Hantar Inisiatif</button>
+          <p id="initiativeReportFeedback" class="form-feedback" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+    <div class="card mb-6"><div class="card-hdr"><div class="card-ttl"><i class="fas fa-clock-rotate-left"></i> Rekod Pengisian Saya</div></div><div class="card-body" id="initiativeReportList"><p class="empty">Belum ada pengisian laporan.</p></div></div>
     <div class="grid-2">
       <div class="card"><div class="card-hdr"><div class="card-ttl"><i class="fas fa-bullseye"></i> Fokus Portal</div></div><div class="card-body"><p>Memastikan setiap inisiatif direkodkan, dipantau dan dilaporkan mengikut kemajuan sebenar kementerian atau agensi.</p><ul class="mini-list"><li>Rekod inisiatif dan sasaran</li><li>Pantau kemajuan pelaksanaan</li><li>Selaras tindakan antara agensi</li><li>Sediakan laporan untuk semakan SSMJ</li></ul></div></div>
       <div class="card"><div class="card-hdr"><div class="card-ttl"><i class="fas fa-clipboard-check"></i> Tindakan Inisiatif</div></div><div class="card-body"><button class="btn btn-blue" style="width:100%;justify-content:center;margin-bottom:10px" onclick="goTo('laporan-inisiatif')"><i class="fas fa-file-circle-plus"></i> Hantar kemas kini pelaksanaan</button><button class="btn btn-success" style="width:100%;justify-content:center" onclick="goTo('aktiviti-inisiatif')"><i class="fas fa-calendar-days"></i> Semak aktiviti berkaitan</button></div></div>
